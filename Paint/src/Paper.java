@@ -1,10 +1,13 @@
+import com.sun.javafx.scene.control.skin.CustomColorDialog;
+
 import javax.swing.*;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 
-public class Paper extends JComponent{
+public class Paper extends JComponent {
 
     private Image image;
     private Graphics2D g2;
@@ -20,7 +23,7 @@ public class Paper extends JComponent{
         });
 
         addMouseMotionListener(new MouseMotionAdapter() {
-            public void mouseDragged(MouseEvent e){
+            public void mouseDragged(MouseEvent e) {
                 curX = e.getX();
                 curY = e.getY();
 
@@ -57,8 +60,12 @@ public class Paper extends JComponent{
         g2.setPaint(Color.red);
     }
 
-    public void black() {
-        g2.setPaint(Color.black);
+    public void orange() {
+        g2.setPaint(Color.orange);
+    }
+
+    public void yellow() {
+        g2.setPaint(Color.yellow);
     }
 
     public void green() {
@@ -67,6 +74,42 @@ public class Paper extends JComponent{
 
     public void blue() {
         g2.setPaint(Color.blue);
+    }
+
+    public void magenta() {
+        g2.setPaint(Color.magenta);
+    }
+
+    public void gray() {
+        g2.setPaint(Color.gray);
+    }
+
+    public void black() {
+        g2.setPaint(Color.black);
+    }
+
+    public void chooseColor(Color c) {
+        g2.setPaint(c);
+    }
+
+    public void erase(){
+        g2.setPaint(Color.white);
+    }
+
+    public void x1(){
+        g2.setStroke(new BasicStroke(1));
+    }
+
+    public void x2(){
+        g2.setStroke(new BasicStroke(2));
+    }
+
+    public void x4(){
+        g2.setStroke(new BasicStroke(4));
+    }
+
+    public void x8(){
+        g2.setStroke(new BasicStroke(8));
     }
 
 }
