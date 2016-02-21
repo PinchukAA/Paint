@@ -51,6 +51,75 @@ public class Main {
         content.setLayout(new BorderLayout());
         paper = new Paper();
 
+        JMenuBar menuBar = new JMenuBar();
+        frame.setJMenuBar(menuBar);
+        menuBar.setBounds(0, 0, 350, 30);
+
+        JMenu menu = new JMenu("Меню");
+        menuBar.add(menu);
+
+        JMenu fileMenu = new JMenu("Файл");
+        menu.add(fileMenu);
+        JMenuItem fileOpenItem = new JMenuItem("Открыть");
+        fileMenu.add(fileOpenItem);
+        JMenuItem fileSaveItem = new JMenuItem("Сохранить как");
+        fileMenu.add(fileSaveItem);
+
+        JMenu editMenu = new JMenu("Правка");
+        menu.add(editMenu);
+
+        JMenu copyMenu = new JMenu("Буфер обмена");
+        editMenu.add(copyMenu);
+        JMenuItem selectItem = new JMenuItem("Выделить");
+        copyMenu.add(selectItem);
+        JMenuItem copyItem = new JMenuItem("Копировать");
+        copyMenu.add(copyItem);
+        JMenuItem pasteItem = new JMenuItem("Вставить");
+        copyMenu.add(pasteItem);
+
+        JMenu toolsMenu = new JMenu("Инструменты");
+        editMenu.add(toolsMenu);
+
+        JMenu hintMenu = new JMenu("Кисть");
+        toolsMenu.add(hintMenu);
+        JMenuItem colorItem = new JMenuItem("Цвет кисти");
+        hintMenu.add(colorItem);
+        JMenu hintSizeMenu = new JMenu("Размер кисти");
+        hintMenu.add(hintSizeMenu);
+
+        JMenu eraserMenu = new JMenu("Ластик");
+        toolsMenu.add(eraserMenu);
+        JMenu eraserSizeMenu= new JMenu("Размер ластика");
+        eraserMenu.add(eraserSizeMenu);
+
+        JMenu textMenu = new JMenu("Текст");
+        toolsMenu.add(textMenu);
+        JMenu textSizeMenu = new JMenu("Размер текста");
+        textMenu.add(textSizeMenu);
+
+        JMenu viewMenu = new JMenu("Вид");
+        editMenu.add(viewMenu);
+        JMenu increaseMenu = new JMenu("Увеличить изображение");
+        viewMenu.add(increaseMenu);
+        JMenu decreaseMenu = new JMenu("Уменьшить изображение");
+        viewMenu.add(decreaseMenu);
+
+        editMenu.addSeparator();
+
+        JMenuItem cleanItem = new JMenuItem("Очистить поле");
+        editMenu.add(cleanItem);
+
+        menu.addSeparator();
+
+        JMenuItem exitItem = new JMenuItem("Выход");
+        menu.add(exitItem);
+
+        exitItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
+            }
+        });
+
         content.add(paper, BorderLayout.CENTER);
         JPanel tools = new JPanel();
 
@@ -93,7 +162,6 @@ public class Main {
         btChColor.setBackground(Color.cyan);
         btChColor.addActionListener(new colorButtonActionListener());
 
-
         btErase = new JButton("Ластик");
         btErase.addActionListener(actionListener);
 
@@ -110,7 +178,7 @@ public class Main {
         tools.add(btErase);
 
         content.add(tools, BorderLayout.NORTH);
-        frame.setSize(600, 600);
+        frame.setSize(1920, 1080);
       //  frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);

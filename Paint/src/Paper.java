@@ -1,7 +1,5 @@
-import com.sun.javafx.scene.control.skin.CustomColorDialog;
 
 import javax.swing.*;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
