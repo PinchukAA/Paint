@@ -4,13 +4,14 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseMotionListener;
 
 public class Paper extends JComponent {
 
     private Image image;
     private Graphics2D g2;
     private int curX, curY, exX, exY;
-    public Paper(){
+    public void  draw(){
         setDoubleBuffered(false);
         addMouseListener(new MouseAdapter() {
             @Override
@@ -27,6 +28,110 @@ public class Paper extends JComponent {
 
                 if (g2 != null) {
                     g2.drawLine(exX, exY, curX, curY);
+                    repaint();
+
+                    exX = curX;
+                    exY = curY;
+                }
+            }
+        });
+    }
+
+    public void drawLine(){
+        setDoubleBuffered(false);
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                exX = e.getX();
+                exY = e.getY();
+            }
+        });
+
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                curX = e.getX();
+                curY = e.getY();
+                if (g2 != null) {
+                    g2.drawLine(exX, exY, curX, curY);
+                    repaint();
+
+                    exX = curX;
+                    exY = curY;
+                }
+            }
+        });
+    }
+
+    public void drawRectangle(){
+        setDoubleBuffered(false);
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                exX = e.getX();
+                exY = e.getY();
+            }
+        });
+
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                curX = e.getX();
+                curY = e.getY();
+                if(curX < exX)
+                {
+                    int tmp = curX;
+                    curX = exX;
+                    exX = tmp;
+                }
+                if(curY < exY)
+                {
+                    int tmp = curY;
+                    curY = exY;
+                    exY = tmp;
+                }
+
+                if (g2 != null) {
+                    g2.drawRect(exX, exY, curX - exX, curY - exY);
+                    repaint();
+
+                    exX = curX;
+                    exY = curY;
+                }
+            }
+        });
+    }
+
+    public void drawOval(){
+        setDoubleBuffered(false);
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                exX = e.getX();
+                exY = e.getY();
+            }
+        });
+
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                curX = e.getX();
+                curY = e.getY();
+                if(curX < exX)
+                {
+                    int tmp = curX;
+                    curX = exX;
+                    exX = tmp;
+                }
+                if(curY < exY)
+                {
+                    int tmp = curY;
+                    curY = exY;
+                    exY = tmp;
+                }
+
+                if (g2 != null) {
+                    g2.drawOval(exX, exY, curX - exX, curY - exY);
                     repaint();
 
                     exX = curX;

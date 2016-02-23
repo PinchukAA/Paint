@@ -2,15 +2,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 
 public class Main {
-    JButton  btCLear, btRed, btOrange, btYellow, btGreen, btBlue,btMagenta, btGray, btBlack, btChColor ,btErase;
+    JButton  btCLear, btRed, btOrange, btYellow, btGreen, btBlue,btMagenta, btGray, btBlack, btChColor ,btErase, btLine, btRectangle, btOval, btHint;
     JMenuItem x1Item, x2Item, x4Item, x8Item, x1ErItem, x2ErItem, x4ErItem, x8ErItem;
     Paper paper;
     Color c;
-    ActionListener actionListener = new ActionListener() {
+    ActionListener colorActionListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == btCLear){
@@ -33,6 +31,25 @@ public class Main {
                 paper.black();
             } else if (e.getSource() == btErase){
                 paper.erase();
+            }
+        }
+    };
+
+    ActionListener toolsActionListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (e.getSource() == btHint){
+                paper.draw();
+            } else if (e.getSource() == btLine) {
+                paper.drawLine();
+            } else if (e.getSource() == btRectangle) {
+                paper.drawRectangle();
+            } else if (e.getSource() == btOval) {
+                paper.drawOval();
+            } else if (e.getSource() == btErase) {
+                paper.erase();
+            } else if (e.getSource() == btCLear) {
+                paper.clear();
             }
         }
     };
@@ -76,6 +93,7 @@ public class Main {
         Container content = frame.getContentPane();
         content.setLayout(new BorderLayout());
         paper = new Paper();
+        paper.draw();
 
         JMenuBar menuBar = new JMenuBar();
         frame.setJMenuBar(menuBar);
@@ -173,65 +191,90 @@ public class Main {
         });
 
         content.add(paper, BorderLayout.CENTER);
-        JPanel tools = new JPanel();
+        JPanel colorPanel = new JPanel();
+        colorPanel.setLayout(new GridLayout(1, 8));
+        JPanel toolsPanel = new JPanel();
+        toolsPanel.setLayout(new GridLayout(6, 1));
+//        JToolBar tools = new JToolBar("Инструменты", JToolBar.VERTICAL);
 
         btCLear = new JButton("Очистить");
-        btCLear.addActionListener(actionListener);
+        btCLear.addActionListener(colorActionListener);
 
         btRed = new JButton();
         btRed.setBackground(Color.red);
-        btRed.addActionListener(actionListener);
+        btRed.addActionListener(colorActionListener);
 
         btOrange = new JButton();
         btOrange.setBackground(Color.orange);
-        btOrange.addActionListener(actionListener);
+        btOrange.addActionListener(colorActionListener);
 
         btYellow = new JButton();
         btYellow.setBackground(Color.YELLOW);
-        btYellow.addActionListener(actionListener);
+        btYellow.addActionListener(colorActionListener);
 
         btGreen = new JButton();
         btGreen.setBackground(Color.green);
-        btGreen.addActionListener(actionListener);
+        btGreen.addActionListener(colorActionListener);
 
         btBlue = new JButton();
         btBlue.setBackground(Color.blue);
-        btBlue.addActionListener(actionListener);
+        btBlue.addActionListener(colorActionListener);
 
         btMagenta = new JButton();
         btMagenta.setBackground(Color.magenta);
-        btMagenta.addActionListener(actionListener);
+        btMagenta.addActionListener(colorActionListener);
 
         btGray= new JButton();
         btGray.setBackground(Color.gray);
-        btGray.addActionListener(actionListener);
+        btGray.addActionListener(colorActionListener);
 
         btBlack = new JButton();
         btBlack.setBackground(Color.black);
-        btBlack.addActionListener(actionListener);
+        btBlack.addActionListener(colorActionListener);
 
         btChColor = new JButton("Цвет");
-        btChColor.setBackground(Color.cyan);
+        btChColor.setBackground(c);
         btChColor.addActionListener(new colorButtonActionListener());
 
+        btHint = new JButton("Кисть");
+        btHint.addActionListener(toolsActionListener);
+
         btErase = new JButton("Ластик");
-        btErase.addActionListener(actionListener);
+        btErase.addActionListener(toolsActionListener);
 
-        tools.add(btCLear);
-        tools.add(btRed);
-        tools.add(btOrange);
-        tools.add(btYellow);
-        tools.add(btGreen);
-        tools.add(btBlue);
-        tools.add(btMagenta);
-        tools.add(btGray);
-        tools.add(btBlack);
-        tools.add(btChColor);
-        tools.add(btErase);
+        btLine= new JButton("Прямая");
+        btLine.addActionListener(toolsActionListener);
 
-        content.add(tools, BorderLayout.NORTH);
+        btRectangle= new JButton("Прямоугольник");
+        btRectangle.addActionListener(toolsActionListener);
+
+        btOval = new JButton("Овал");
+        btOval.addActionListener(toolsActionListener);
+
+
+
+        colorPanel.add(btChColor);
+        colorPanel.add(btRed);
+        colorPanel.add(btOrange);
+        colorPanel.add(btYellow);
+        colorPanel.add(btGreen);
+        colorPanel.add(btBlue);
+        colorPanel.add(btMagenta);
+        colorPanel.add(btGray);
+        colorPanel.add(btBlack);
+
+        toolsPanel.add(btHint);
+        toolsPanel.add(btLine);
+        toolsPanel.add(btRectangle);
+        toolsPanel.add(btOval);
+        toolsPanel.add(btErase);
+        toolsPanel.add(btCLear);
+
+
+        content.add(colorPanel, BorderLayout.NORTH);
+        content.add(toolsPanel, BorderLayout.WEST);
         frame.setSize(800, 600);
-      //  frame.setResizable(false);
+        frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
     }
