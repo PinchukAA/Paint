@@ -1,7 +1,11 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
 
 public class Frame {
     JButton btRed, btOrange, btYellow, btGreen, btBlue,btMagenta, btGray, btBlack;
@@ -10,6 +14,9 @@ public class Frame {
     JMenuItem x1Item, x2Item, x4Item, x8Item, x1ErItem, x2ErItem, x4ErItem, x8ErItem;
     Canvas canvas;
     Color c;
+    String fileName;
+    BufferedImage image;
+
 
     ActionListener colorActionListener = new ActionListener() {
         @Override
@@ -91,8 +98,6 @@ public class Frame {
         JFrame frame = new JFrame("Рисовалка");
         Container content = frame.getContentPane();
         content.setLayout(new BorderLayout());
-        canvas = new Canvas();
-        canvas.draw(1);
 
         JMenuBar menuBar = new JMenuBar();
         frame.setJMenuBar(menuBar);
@@ -105,10 +110,32 @@ public class Frame {
         menu.add(fileMenu);
         JMenuItem fileOpenItem = new JMenuItem("Открыть");
         fileMenu.add(fileOpenItem);
+
+        fileOpenItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser openFileChooser = new JFileChooser();
+                openFileChooser.setFileFilter(new FileNameExtensionFilter("Image files", "jpg", "png"));
+                int result = openFileChooser.showOpenDialog(frame);
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    try {
+                        fileName = openFileChooser.getSelectedFile().getAbsolutePath();
+                        File file = new File(fileName);
+                        image = ImageIO.read(file);
+                        frame.setSize(image.getWidth() + 40, image.getHeight() + 80);
+                        canvas.setImage(image);
+
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(frame, "Такого файла не существует");
+                    }
+                }
+            }
+        });
+
+        canvas = new Canvas();
+
         JMenuItem fileSaveItem = new JMenuItem("Сохранить как");
         fileMenu.add(fileSaveItem);
-
-
 
         JMenu editMenu = new JMenu("Правка");
         menu.add(editMenu);
@@ -275,9 +302,10 @@ public class Frame {
 
         content.add(colorPanel, BorderLayout.NORTH);
         content.add(toolsPanel, BorderLayout.WEST);
-        frame.setSize(800, 600);
-        frame.setResizable(false);
+        frame.setSize(1980, 1080);
+   //     frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
+   //     frame.pack();
     }
 }

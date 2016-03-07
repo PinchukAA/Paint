@@ -4,11 +4,16 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
-import java.awt.event.MouseMotionListener;
+import java.awt.image.BufferedImage;
 
-public class Canvas extends JComponent {
+public class Canvas extends JPanel {
+    private BufferedImage image;
+    private Graphics g;
 
-    private Image image;
+    Canvas(){
+        draw(1);
+        repaint();
+    }
     public Graphics2D g2;
     private int curX, curY, exX, exY;
     public boolean drHint = false;
@@ -52,6 +57,7 @@ public class Canvas extends JComponent {
                 });
                 break;
             case 2:
+                black();
                 drHint = false;
                 drLine = true;
                 drRect = false;
@@ -76,6 +82,7 @@ public class Canvas extends JComponent {
                 });
                 break;
             case 3:
+                black();
                 drHint = false;
                 drLine = false;
                 drRect = true;
@@ -110,6 +117,7 @@ public class Canvas extends JComponent {
                 });
                 break;
             case 4:
+                black();
                 drHint = false;
                 drLine = false;
                 drRect = false;
@@ -148,18 +156,26 @@ public class Canvas extends JComponent {
 
     protected void paintComponent(Graphics g){
         if (image == null) {
-            image = createImage(getSize().width, getSize().height);
+            image = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
             g2 = (Graphics2D) image.getGraphics();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             clear();
         }
-
         g.drawImage(image, 0, 0, null);
+    }
+
+    public void setImage(BufferedImage image){
+        this.image = image;
+        g2 = (Graphics2D) image.getGraphics();
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setPaint(Color.black);
+        getGraphics().drawImage(image, 0, 0, null);
+        repaint();
     }
 
     public void clear() {
         g2.setPaint(Color.white);
-        g2.fillRect(0, 0, getSize().width, getSize().height);
+        g2.fillRect(0, 0, 1920, 1080);
         g2.setPaint(Color.black);
         repaint();
     }
