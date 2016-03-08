@@ -7,7 +7,7 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
 
 public class Canvas extends JPanel {
-    private BufferedImage image;
+    public BufferedImage image;
     private Graphics g;
 
     Canvas(){
@@ -171,6 +171,10 @@ public class Canvas extends JPanel {
         g2.setPaint(Color.black);
         getGraphics().drawImage(image, 0, 0, null);
         repaint();
+    }
+
+    public BufferedImage getImage(){
+        return image;
     }
 
     public void clear() {

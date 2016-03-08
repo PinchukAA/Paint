@@ -115,7 +115,7 @@ public class Frame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser openFileChooser = new JFileChooser();
-                openFileChooser.setFileFilter(new FileNameExtensionFilter("Image files", "jpg", "png"));
+                openFileChooser.setFileFilter(new FileNameExtensionFilter("Image files", "jpg"));
                 int result = openFileChooser.showOpenDialog(frame);
                 if (result == JFileChooser.APPROVE_OPTION) {
                     try {
@@ -126,7 +126,7 @@ public class Frame {
                         canvas.setImage(image);
 
                     } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(frame, "Такого файла не существует");
+                        JOptionPane.showMessageDialog(frame, "Такого файла не существует!");
                     }
                 }
             }
@@ -136,6 +136,25 @@ public class Frame {
 
         JMenuItem fileSaveItem = new JMenuItem("Сохранить как");
         fileMenu.add(fileSaveItem);
+
+        fileSaveItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser saveFileChooser = new JFileChooser();
+                saveFileChooser.setFileFilter(new FileNameExtensionFilter("Image files", "jpg"));
+                int result = saveFileChooser.showSaveDialog(frame);
+                if(result == JFileChooser.APPROVE_OPTION){
+                    try{
+                        fileName = saveFileChooser.getSelectedFile().getAbsolutePath();
+                        ImageIO.write(canvas.getImage(),"jpeg", new File(fileName + ".jpg"));
+
+                    }catch(Exception ex){
+                        JOptionPane.showMessageDialog(frame, "Такого файла не существует!");
+                    }
+                }
+
+            }
+        });
 
         JMenu editMenu = new JMenu("Правка");
         menu.add(editMenu);
