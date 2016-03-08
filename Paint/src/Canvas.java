@@ -1,14 +1,14 @@
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 
 public class Canvas extends JPanel {
     public BufferedImage image;
     private Graphics g;
+   // private Stroke eraseStroke;
+    private Color hintColor;
 
     Canvas(){
         draw(1);
@@ -20,6 +20,7 @@ public class Canvas extends JPanel {
     public boolean drLine = false;
     public boolean drRect = false;
     public boolean drOval = false;
+    public boolean drText = false;
 
     public void draw(int a){
         setDoubleBuffered(false);
@@ -37,6 +38,7 @@ public class Canvas extends JPanel {
                 drLine = false;
                 drRect = false;
                 drOval = false;
+                drText = false;
 
                 addMouseMotionListener(new MouseMotionAdapter() {
                     public void mouseDragged(MouseEvent e) {
@@ -57,11 +59,11 @@ public class Canvas extends JPanel {
                 });
                 break;
             case 2:
-                black();
                 drHint = false;
                 drLine = true;
                 drRect = false;
                 drOval = false;
+                drText = false;
 
                 addMouseListener(new MouseAdapter() {
                     @Override
@@ -82,11 +84,11 @@ public class Canvas extends JPanel {
                 });
                 break;
             case 3:
-                black();
                 drHint = false;
                 drLine = false;
                 drRect = true;
                 drOval = false;
+                drText = false;
 
                 addMouseListener(new MouseAdapter() {
                     @Override
@@ -117,11 +119,11 @@ public class Canvas extends JPanel {
                 });
                 break;
             case 4:
-                black();
                 drHint = false;
                 drLine = false;
                 drRect = false;
                 drOval = true;
+                drText = false;
 
                 addMouseListener(new MouseAdapter() {
                     @Override
@@ -151,6 +153,33 @@ public class Canvas extends JPanel {
                     }
                 });
                 break;
+            case 5:
+                drHint = false;
+                drLine = false;
+                drRect = false;
+                drOval = false;
+                drText = true;
+                addMouseListener(new MouseAdapter() {
+                    public void mouseReleased(MouseEvent e){
+                        curX = e.getX();
+                        curY = e.getY();
+                        requestFocus();
+                    }
+                });
+                addKeyListener(new KeyAdapter() {
+                    @Override
+                    public void keyTyped(KeyEvent e) {
+                        String text = new String("");
+                        text+=e.getKeyChar();
+                        g2.setFont(new  Font("Arial", 0, 15));
+                        g2.drawString(text, curX, curY);
+                        curX += 10;
+
+                        repaint();
+                        requestFocus();
+                    }
+                });
+
         }
     }
 
@@ -179,7 +208,7 @@ public class Canvas extends JPanel {
 
     public void clear() {
         g2.setPaint(Color.white);
-        g2.fillRect(0, 0, 1920, 1080);
+        g2.fillRect(0, 0, 800, 600);
         g2.setPaint(Color.black);
         repaint();
     }

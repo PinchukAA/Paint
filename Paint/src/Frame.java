@@ -9,7 +9,7 @@ import java.io.File;
 
 public class Frame {
     JButton btRed, btOrange, btYellow, btGreen, btBlue,btMagenta, btGray, btBlack;
-    JButton btCLear, btChColor ,btErase, btLine, btRectangle, btOval, btHint;
+    JButton btCLear, btChColor ,btErase, btLine, btRectangle, btOval, btHint, btText;
 
     JMenuItem x1Item, x2Item, x4Item, x8Item, x1ErItem, x2ErItem, x4ErItem, x8ErItem;
     Canvas canvas;
@@ -56,6 +56,8 @@ public class Frame {
                 canvas.draw(3);
             } else if (e.getSource() == btOval) {
                 canvas.draw(4);
+            }else if (e.getSource() == btText) {
+                canvas.draw(5);
             } else if (e.getSource() == btErase) {
                 canvas.erase();
             } else if (e.getSource() == btCLear) {
@@ -67,6 +69,7 @@ public class Frame {
     private class colorButtonActionListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             c = JColorChooser.showDialog(((Component) e.getSource()).getParent(), "Выберите цвет!", c);
+            btChColor.setBackground(c);
             canvas.chooseColor(c);
         }
     }
@@ -244,7 +247,7 @@ public class Frame {
         JPanel colorPanel = new JPanel();
         colorPanel.setLayout(new GridLayout(1, 8));
         JPanel toolsPanel = new JPanel();
-        toolsPanel.setLayout(new GridLayout(6, 1));
+        toolsPanel.setLayout(new GridLayout(7, 1));
 //        JToolBar tools = new JToolBar("Инструменты", JToolBar.VERTICAL);
 
         btCLear = new JButton("Очистить");
@@ -301,6 +304,9 @@ public class Frame {
         btOval = new JButton("Овал");
         btOval.addActionListener(toolsActionListener);
 
+        btText = new JButton("Текст");
+        btText.addActionListener(toolsActionListener);
+
         colorPanel.add(btChColor);
         colorPanel.add(btRed);
         colorPanel.add(btOrange);
@@ -315,13 +321,15 @@ public class Frame {
         toolsPanel.add(btLine);
         toolsPanel.add(btRectangle);
         toolsPanel.add(btOval);
+        toolsPanel.add(btText);
         toolsPanel.add(btErase);
         toolsPanel.add(btCLear);
 
 
+
         content.add(colorPanel, BorderLayout.NORTH);
         content.add(toolsPanel, BorderLayout.WEST);
-        frame.setSize(1980, 1080);
+        frame.setSize(800, 600);
    //     frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
