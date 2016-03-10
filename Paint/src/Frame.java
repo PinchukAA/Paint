@@ -11,7 +11,7 @@ public class Frame {
     JButton btRed, btOrange, btYellow, btGreen, btBlue,btMagenta, btGray, btBlack;
     JButton btCLear, btChColor ,btErase, btLine, btRectangle, btOval, btHint, btText;
 
-    JMenuItem x1Item, x2Item, x4Item, x8Item, x1ErItem, x2ErItem, x4ErItem, x8ErItem;
+    JMenuItem x1Item, x2Item, x4Item, x8Item;
     Canvas canvas;
     Color c;
     String fileName;
@@ -49,15 +49,15 @@ public class Frame {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == btHint){
-                canvas.draw(1);
+                canvas.draw();
             } else if (e.getSource() == btLine) {
-                canvas.draw(2);
+                canvas.drLine();
             } else if (e.getSource() == btRectangle) {
-                canvas.draw(3);
+                canvas.drRectangle();
             } else if (e.getSource() == btOval) {
-                canvas.draw(4);
+                canvas.drOval();
             }else if (e.getSource() == btText) {
-                canvas.draw(5);
+                canvas.drText();
             } else if (e.getSource() == btErase) {
                 canvas.erase();
             } else if (e.getSource() == btCLear) {
@@ -84,14 +84,6 @@ public class Frame {
             } else if (e.getSource() == x4Item) {
                 canvas.x4();
             } else if (e.getSource() == x8Item) {
-                canvas.x8();
-            } else if (e.getSource() == x1ErItem){
-                canvas.x1();
-            } else if (e.getSource() == x2ErItem) {
-                canvas.x2();
-            } else if (e.getSource() == x4ErItem) {
-                canvas.x4();
-            } else if (e.getSource() == x8ErItem) {
                 canvas.x8();
             }
         }
@@ -174,13 +166,13 @@ public class Frame {
         JMenu toolsMenu = new JMenu("Инструменты");
         editMenu.add(toolsMenu);
 
-        JMenu hintMenu = new JMenu("Кисть");
-        toolsMenu.add(hintMenu);
-        JMenuItem colorItem = new JMenuItem("Цвет кисти");
-        hintMenu.add(colorItem);
+        JMenu sizeMenu = new JMenu("Размер");
+        toolsMenu.add(sizeMenu);
+        JMenuItem colorItem = new JMenuItem("Цвет");
+        toolsMenu.add(colorItem);
         colorItem.addActionListener(new colorButtonActionListener());
-        JMenu hintSizeMenu = new JMenu("Размер кисти");
-        hintMenu.add(hintSizeMenu);
+        JMenu hintSizeMenu = new JMenu("Кисть/ластик");
+        sizeMenu.add(hintSizeMenu);
 
 
         x1Item = new JMenuItem("x1");
@@ -196,30 +188,8 @@ public class Frame {
         hintSizeMenu.add(x8Item);
         x8Item.addActionListener(sizeHintActionListener);
 
-        JMenu eraserMenu = new JMenu("Ластик");
-        toolsMenu.add(eraserMenu);
-        JMenu eraserSizeMenu= new JMenu("Размер ластика");
-        eraserMenu.add(eraserSizeMenu);
-
-
-        x1ErItem = new JMenuItem("x1");
-        eraserSizeMenu.add(x1ErItem);
-        x1ErItem.addActionListener(sizeHintActionListener);
-        x2ErItem = new JMenuItem("x2");
-        eraserSizeMenu.add(x2ErItem);
-        x2ErItem.addActionListener(sizeHintActionListener);
-        x4ErItem = new JMenuItem("x4");
-        eraserSizeMenu.add(x4ErItem);
-        x4ErItem.addActionListener(sizeHintActionListener);
-        x8ErItem = new JMenuItem("x8");
-        eraserSizeMenu.add(x8ErItem);
-        x8Item.addActionListener(sizeHintActionListener);
-
-
-        JMenu textMenu = new JMenu("Текст");
-        toolsMenu.add(textMenu);
-        JMenu textSizeMenu = new JMenu("Размер текста");
-        textMenu.add(textSizeMenu);
+        JMenu textSizeMenu = new JMenu("Текст");
+        sizeMenu.add(textSizeMenu);
         JMenu viewMenu = new JMenu("Вид");
         editMenu.add(viewMenu);
         JMenu increaseMenu = new JMenu("Увеличить изображение");
@@ -329,7 +299,7 @@ public class Frame {
 
         content.add(colorPanel, BorderLayout.NORTH);
         content.add(toolsPanel, BorderLayout.WEST);
-        frame.setSize(800, 600);
+        frame.setSize(1920, 1080);
    //     frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);

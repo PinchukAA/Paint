@@ -7,179 +7,187 @@ import java.awt.image.BufferedImage;
 public class Canvas extends JPanel {
     public BufferedImage image;
     private Graphics g;
-   // private Stroke eraseStroke;
-    private Color hintColor;
 
     Canvas(){
-        draw(1);
+        draw();
         repaint();
     }
     public Graphics2D g2;
     private int curX, curY, exX, exY;
-    public boolean drHint = false;
-    public boolean drLine = false;
-    public boolean drRect = false;
-    public boolean drOval = false;
-    public boolean drText = false;
 
-    public void draw(int a){
+    public void draw(){
         setDoubleBuffered(false);
+        removeListeners();
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 exX = e.getX();
                 exY = e.getY();
+                requestFocus();
+            }
+        });
+        addMouseMotionListener(new MouseMotionAdapter() {
+            public void mouseDragged(MouseEvent e) {
+                curX = e.getX();
+                curY = e.getY();
+
+                if (g2 != null) {
+                    g2.drawLine(exX, exY, curX, curY);
+                    repaint();
+
+                    exX = curX;
+                    exY = curY;
+                }
+            }
+        });
+    }
+
+    public void drLine(){
+        setDoubleBuffered(false);
+        removeListeners();
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                exX = e.getX();
+                exY = e.getY();
+                requestFocus();
             }
         });
 
-        switch(a) {
-            case 1:
-                drHint = true;
-                drLine = false;
-                drRect = false;
-                drOval = false;
-                drText = false;
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                curX = e.getX();
+                curY = e.getY();
+                if (g2 != null) {
+                    g2.drawLine(exX, exY, curX, curY);
+                    repaint();
 
-                addMouseMotionListener(new MouseMotionAdapter() {
-                    public void mouseDragged(MouseEvent e) {
+                    exX = curX;
+                    exY = curY;
+                }
 
-                        if(drHint){
-                            curX = e.getX();
-                            curY = e.getY();
+            }
+        });
+    }
 
-                            if (g2 != null) {
-                                g2.drawLine(exX, exY, curX, curY);
-                                repaint();
+    public void drRectangle(){
+        setDoubleBuffered(false);
+        removeListeners();
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                exX = e.getX();
+                exY = e.getY();
+                requestFocus();
+            }
+        });
 
-                                exX = curX;
-                                exY = curY;
-                            }
-                        }
-                    }
-                });
-                break;
-            case 2:
-                drHint = false;
-                drLine = true;
-                drRect = false;
-                drOval = false;
-                drText = false;
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                curX = e.getX();
+                curY = e.getY();
+                if (curX < exX) {
+                    int tmp = curX;
+                    curX = exX;
+                    exX = tmp;
+                }
+                if (curY < exY) {
+                    int tmp = curY;
+                    curY = exY;
+                    exY = tmp;
+                }
 
-                addMouseListener(new MouseAdapter() {
-                    @Override
-                    public void mouseReleased(MouseEvent e) {
-                        if (drLine){
-                            curX = e.getX();
-                            curY = e.getY();
-                            if (g2 != null) {
-                                g2.drawLine(exX, exY, curX, curY);
-                                repaint();
+                if (g2 != null) {
+                    g2.drawRect(exX, exY, curX - exX, curY - exY);
+                    repaint();
 
-                                exX = curX;
-                                exY = curY;
-                            }
-                        }
+                    exX = curX;
+                    exY = curY;
+                }
+            }
+        });
+    }
 
-                    }
-                });
-                break;
-            case 3:
-                drHint = false;
-                drLine = false;
-                drRect = true;
-                drOval = false;
-                drText = false;
+    public void drOval(){
+        setDoubleBuffered(false);
+        removeListeners();
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                exX = e.getX();
+                exY = e.getY();
+                requestFocus();
+            }
+        });
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                curX = e.getX();
+                curY = e.getY();
+                if (curX < exX) {
+                    int tmp = curX;
+                    curX = exX;
+                    exX = tmp;
+                }
+                if (curY < exY) {
+                    int tmp = curY;
+                    curY = exY;
+                    exY = tmp;
+                }
 
-                addMouseListener(new MouseAdapter() {
-                    @Override
-                    public void mouseReleased(MouseEvent e) {
-                        if (drRect) {
-                            curX = e.getX();
-                            curY = e.getY();
-                            if (curX < exX) {
-                                int tmp = curX;
-                                curX = exX;
-                                exX = tmp;
-                            }
-                            if (curY < exY) {
-                                int tmp = curY;
-                                curY = exY;
-                                exY = tmp;
-                            }
+                if (g2 != null) {
+                    g2.drawOval(exX, exY, curX - exX, curY - exY);
 
-                            if (g2 != null) {
-                                g2.drawRect(exX, exY, curX - exX, curY - exY);
-                                repaint();
+                    repaint();
+                    exX = curX;
+                    exY = curY;
+                }
+            }
+        });
+    }
 
-                                exX = curX;
-                                exY = curY;
-                            }
-                        }
-                    }
-                });
-                break;
-            case 4:
-                drHint = false;
-                drLine = false;
-                drRect = false;
-                drOval = true;
-                drText = false;
+    public void drText(){
+        setDoubleBuffered(false);
+        removeListeners();
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                exX = e.getX();
+                exY = e.getY();
+                requestFocus();
+            }
+        });
 
-                addMouseListener(new MouseAdapter() {
-                    @Override
-                    public void mouseReleased(MouseEvent e) {
-                        if (drOval) {
-                            curX = e.getX();
-                            curY = e.getY();
-                            if (curX < exX) {
-                                int tmp = curX;
-                                curX = exX;
-                                exX = tmp;
-                            }
-                            if (curY < exY) {
-                                int tmp = curY;
-                                curY = exY;
-                                exY = tmp;
-                            }
+        addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                requestFocus();
+                String text = new String("");
+                text+=e.getKeyChar();
+                g2.setFont(new Font("Arial", 0, 15));
+                g2.drawString(text, exX, exY);
+                exX += 10;
 
-                            if (g2 != null) {
-                                g2.drawOval(exX, exY, curX - exX, curY - exY);
-                                repaint();
+                repaint();
+            }
+        });
+    }
 
-                                exX = curX;
-                                exY = curY;
-                            }
-                        }
-                    }
-                });
-                break;
-            case 5:
-                drHint = false;
-                drLine = false;
-                drRect = false;
-                drOval = false;
-                drText = true;
-                addMouseListener(new MouseAdapter() {
-                    public void mouseReleased(MouseEvent e){
-                        curX = e.getX();
-                        curY = e.getY();
-                        requestFocus();
-                    }
-                });
-                addKeyListener(new KeyAdapter() {
-                    @Override
-                    public void keyTyped(KeyEvent e) {
-                        String text = new String("");
-                        text+=e.getKeyChar();
-                        g2.setFont(new  Font("Arial", 0, 15));
-                        g2.drawString(text, curX, curY);
-                        curX += 10;
 
-                        repaint();
-                        requestFocus();
-                    }
-                });
-
+    public void removeListeners(){
+        MouseListener[] l1= getMouseListeners();
+        for(MouseListener i: l1){
+            removeMouseListener(i);
+        }
+        MouseMotionListener[] l2 = getMouseMotionListeners();
+        for(MouseMotionListener i: l2){
+            removeMouseMotionListener(i);
+        }
+        KeyListener[] l3 = getKeyListeners();
+        for(KeyListener i: l3){
+            removeKeyListener(i);
         }
     }
 
@@ -208,7 +216,7 @@ public class Canvas extends JPanel {
 
     public void clear() {
         g2.setPaint(Color.white);
-        g2.fillRect(0, 0, 800, 600);
+        g2.fillRect(0, 0, 1920, 1080);
         g2.setPaint(Color.black);
         repaint();
     }
@@ -251,7 +259,7 @@ public class Canvas extends JPanel {
 
     public void erase(){
         g2.setPaint(Color.white);
-        draw(1);
+        draw();
     }
 
     public void x1(){
