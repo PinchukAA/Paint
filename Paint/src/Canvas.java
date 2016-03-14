@@ -2,20 +2,30 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Line2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 public class Canvas extends JPanel {
     public BufferedImage image;
-    private Graphics g;
-
+    private Shape curShape;
+    public Graphics2D g2;
     Canvas(){
-        draw();
+        draw(false);
         repaint();
     }
-    public Graphics2D g2;
-    private int curX, curY, exX, exY;
 
-    public void draw(){
+    private int curX, curY, exX, exY;
+    Color color;
+
+    public void draw(boolean b) {
+        if (g2 != null) {
+            g2.setColor(color);
+            if (b) {
+                g2.setPaint(Color.white);
+            }
+        }
         setDoubleBuffered(false);
         removeListeners();
         addMouseListener(new MouseAdapter() {
@@ -45,6 +55,7 @@ public class Canvas extends JPanel {
     public void drLine(){
         setDoubleBuffered(false);
         removeListeners();
+        g2.setPaint(color);
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -60,20 +71,32 @@ public class Canvas extends JPanel {
                 curX = e.getX();
                 curY = e.getY();
                 if (g2 != null) {
-                    g2.drawLine(exX, exY, curX, curY);
-                    repaint();
 
-                    exX = curX;
-                    exY = curY;
+                    g2.drawLine(exX, exY, curX, curY);
+                    curShape = null;
+                    repaint();
                 }
 
             }
         });
+
+        addMouseMotionListener(new MouseAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                curX = e.getX();
+                curY = e.getY();
+
+                curShape = new Line2D.Double(exX, exY, curX, curY);
+                repaint();
+            }
+        });
+
     }
 
     public void drRectangle(){
         setDoubleBuffered(false);
         removeListeners();
+        g2.setPaint(color);
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -83,29 +106,30 @@ public class Canvas extends JPanel {
             }
         });
 
+
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
                 curX = e.getX();
                 curY = e.getY();
-                if (curX < exX) {
-                    int tmp = curX;
-                    curX = exX;
-                    exX = tmp;
-                }
-                if (curY < exY) {
-                    int tmp = curY;
-                    curY = exY;
-                    exY = tmp;
-                }
 
                 if (g2 != null) {
-                    g2.drawRect(exX, exY, curX - exX, curY - exY);
+                    g2.drawRect(Math.min(exX, curX), Math.min(exY, curY), Math.abs(curX - exX), Math.abs(curY - exY));
+                    curShape = null;
                     repaint();
-
-                    exX = curX;
-                    exY = curY;
                 }
+
+            }
+        });
+
+        addMouseMotionListener(new MouseAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                curX = e.getX();
+                curY = e.getY();
+
+                curShape = new Rectangle2D.Double(Math.min(exX, curX), Math.min(exY, curY), Math.abs(curX - exX), Math.abs(curY - exY));
+                repaint();
             }
         });
     }
@@ -113,6 +137,7 @@ public class Canvas extends JPanel {
     public void drOval(){
         setDoubleBuffered(false);
         removeListeners();
+        g2.setPaint(color);
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -126,24 +151,25 @@ public class Canvas extends JPanel {
             public void mouseReleased(MouseEvent e) {
                 curX = e.getX();
                 curY = e.getY();
-                if (curX < exX) {
-                    int tmp = curX;
-                    curX = exX;
-                    exX = tmp;
-                }
-                if (curY < exY) {
-                    int tmp = curY;
-                    curY = exY;
-                    exY = tmp;
-                }
+
 
                 if (g2 != null) {
-                    g2.drawOval(exX, exY, curX - exX, curY - exY);
+                    g2.drawOval(Math.min(exX, curX), Math.min(exY, curY), Math.abs(curX - exX), Math.abs(curY - exY));
+                    curShape = null;
 
                     repaint();
-                    exX = curX;
-                    exY = curY;
                 }
+            }
+        });
+
+        addMouseMotionListener(new MouseAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                curX = e.getX();
+                curY = e.getY();
+
+                curShape = new Ellipse2D.Double(Math.min(exX, curX), Math.min(exY, curY), Math.abs(curX - exX), Math.abs(curY - exY));
+                repaint();
             }
         });
     }
@@ -151,6 +177,7 @@ public class Canvas extends JPanel {
     public void drText(){
         setDoubleBuffered(false);
         removeListeners();
+        g2.setPaint(color);
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -166,9 +193,9 @@ public class Canvas extends JPanel {
                 requestFocus();
                 String text = new String("");
                 text+=e.getKeyChar();
-                g2.setFont(new Font("Arial", 0, 15));
+                g2.setFont(new Font("Arial", 0, 30));
                 g2.drawString(text, exX, exY);
-                exX += 10;
+                exX += 20;
 
                 repaint();
             }
@@ -198,7 +225,13 @@ public class Canvas extends JPanel {
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             clear();
         }
-        g.drawImage(image, 0, 0, null);
+        g.drawImage(image, 0, 0, this);
+
+        if(curShape!=null){
+            g.setColor(Color.blue);
+            ((Graphics2D)(g)).draw(curShape);
+        }
+
     }
 
     public void setImage(BufferedImage image){
@@ -214,9 +247,10 @@ public class Canvas extends JPanel {
         return image;
     }
 
+
     public void clear() {
         g2.setPaint(Color.white);
-        g2.fillRect(0, 0, 1920, 1080);
+        g2.fillRect(0, 0, getWidth(), getHeight());
         g2.setPaint(Color.black);
         repaint();
     }
@@ -258,8 +292,8 @@ public class Canvas extends JPanel {
     }
 
     public void erase(){
-        g2.setPaint(Color.white);
-        draw();
+        color = g2.getColor();
+        draw(true);
     }
 
     public void x1(){

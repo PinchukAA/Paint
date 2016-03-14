@@ -11,11 +11,12 @@ public class Frame {
     JButton btRed, btOrange, btYellow, btGreen, btBlue,btMagenta, btGray, btBlack;
     JButton btCLear, btChColor ,btErase, btLine, btRectangle, btOval, btHint, btText;
 
-    JMenuItem x1Item, x2Item, x4Item, x8Item;
+    JMenuItem x1Item, x2Item, x4Item, x8Item, cleanItem;
     Canvas canvas;
     Color c;
     String fileName;
     BufferedImage image;
+    boolean packFrame = false;
 
 
     ActionListener colorActionListener = new ActionListener() {
@@ -49,7 +50,7 @@ public class Frame {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == btHint){
-                canvas.draw();
+                canvas.draw(false);
             } else if (e.getSource() == btLine) {
                 canvas.drLine();
             } else if (e.getSource() == btRectangle) {
@@ -60,7 +61,7 @@ public class Frame {
                 canvas.drText();
             } else if (e.getSource() == btErase) {
                 canvas.erase();
-            } else if (e.getSource() == btCLear) {
+            } else if (e.getSource() == btCLear || e.getSource() == cleanItem) {
                 canvas.clear();
             }
         }
@@ -138,12 +139,12 @@ public class Frame {
                 JFileChooser saveFileChooser = new JFileChooser();
                 saveFileChooser.setFileFilter(new FileNameExtensionFilter("Image files", "jpg"));
                 int result = saveFileChooser.showSaveDialog(frame);
-                if(result == JFileChooser.APPROVE_OPTION){
-                    try{
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    try {
                         fileName = saveFileChooser.getSelectedFile().getAbsolutePath();
-                        ImageIO.write(canvas.getImage(),"jpeg", new File(fileName + ".jpg"));
+                        ImageIO.write(canvas.getImage(), "jpeg", new File(fileName + ".jpg"));
 
-                    }catch(Exception ex){
+                    } catch (Exception ex) {
                         JOptionPane.showMessageDialog(frame, "Такого файла не существует!");
                     }
                 }
@@ -199,8 +200,9 @@ public class Frame {
 
         editMenu.addSeparator();
 
-        JMenuItem cleanItem = new JMenuItem("Очистить поле");
+        cleanItem = new JMenuItem("Очистить поле");
         editMenu.add(cleanItem);
+        cleanItem.addActionListener(toolsActionListener);
 
         menu.addSeparator();
 
@@ -220,7 +222,7 @@ public class Frame {
         toolsPanel.setLayout(new GridLayout(7, 1));
 //        JToolBar tools = new JToolBar("Инструменты", JToolBar.VERTICAL);
 
-        btCLear = new JButton("Очистить");
+        btCLear = new JButton(new ImageIcon("clear.png"));
         btCLear.addActionListener(colorActionListener);
 
         btRed = new JButton();
@@ -255,26 +257,26 @@ public class Frame {
         btBlack.setBackground(Color.black);
         btBlack.addActionListener(colorActionListener);
 
-        btChColor = new JButton("Цвет");
+        btChColor = new JButton(new ImageIcon("color.png"));
         btChColor.setBackground(c);
         btChColor.addActionListener(new colorButtonActionListener());
 
-        btHint = new JButton("Кисть");
+        btHint = new JButton(new ImageIcon("pencil.png"));
         btHint.addActionListener(toolsActionListener);
 
-        btErase = new JButton("Ластик");
+        btErase = new JButton(new ImageIcon("eraser.png"));
         btErase.addActionListener(toolsActionListener);
 
-        btLine= new JButton("Прямая");
+        btLine= new JButton(new ImageIcon("line.png"));
         btLine.addActionListener(toolsActionListener);
 
-        btRectangle= new JButton("Прямоугольник");
+        btRectangle= new JButton(new ImageIcon("rectangle.png"));
         btRectangle.addActionListener(toolsActionListener);
 
-        btOval = new JButton("Овал");
+        btOval = new JButton(new ImageIcon("oval.png"));
         btOval.addActionListener(toolsActionListener);
 
-        btText = new JButton("Текст");
+        btText = new JButton(new ImageIcon("textBold.png"));
         btText.addActionListener(toolsActionListener);
 
         colorPanel.add(btChColor);
@@ -299,10 +301,9 @@ public class Frame {
 
         content.add(colorPanel, BorderLayout.NORTH);
         content.add(toolsPanel, BorderLayout.WEST);
-        frame.setSize(1920, 1080);
-   //     frame.setResizable(false);
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        frame.setSize(screenSize.width, screenSize.height);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
-   //     frame.pack();
     }
 }
