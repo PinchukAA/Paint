@@ -191,11 +191,15 @@ public class Canvas extends JPanel {
             @Override
             public void keyTyped(KeyEvent e) {
                 requestFocus();
-                String text = new String("");
-                text+=e.getKeyChar();
+                String text = new String();
+
+                char ch = e.getKeyChar();
+                int chWidth = g2.getFontMetrics().charWidth(ch);
+                text += ch;
+
                 g2.setFont(new Font("Arial", 0, 30));
                 g2.drawString(text, exX, exY);
-                exX += 20;
+                exX += (chWidth+5);
 
                 repaint();
             }

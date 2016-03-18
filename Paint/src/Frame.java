@@ -8,7 +8,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 
 public class Frame {
-    JButton btRed, btOrange, btYellow, btGreen, btBlue,btMagenta, btGray, btBlack;
+    JButton btRed, btOrange, btYellow, btGreen, btBlue, btMagenta, btGray, btBlack;
     JButton btCLear, btChColor ,btErase, btLine, btRectangle, btOval, btHint, btText;
 
     JMenuItem x1Item, x2Item, x4Item, x8Item, cleanItem;
@@ -16,7 +16,6 @@ public class Frame {
     Color c;
     String fileName;
     BufferedImage image;
-    boolean packFrame = false;
 
 
     ActionListener colorActionListener = new ActionListener() {
@@ -107,9 +106,7 @@ public class Frame {
         JMenuItem fileOpenItem = new JMenuItem("Открыть");
         fileMenu.add(fileOpenItem);
 
-        fileOpenItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        fileOpenItem.addActionListener(e -> {
                 JFileChooser openFileChooser = new JFileChooser();
                 openFileChooser.setFileFilter(new FileNameExtensionFilter("Image files", "jpg"));
                 int result = openFileChooser.showOpenDialog(frame);
@@ -125,7 +122,6 @@ public class Frame {
                         JOptionPane.showMessageDialog(frame, "Такого файла не существует!");
                     }
                 }
-            }
         });
 
         canvas = new Canvas();
@@ -133,9 +129,7 @@ public class Frame {
         JMenuItem fileSaveItem = new JMenuItem("Сохранить как");
         fileMenu.add(fileSaveItem);
 
-        fileSaveItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        fileSaveItem.addActionListener(e -> {
                 JFileChooser saveFileChooser = new JFileChooser();
                 saveFileChooser.setFileFilter(new FileNameExtensionFilter("Image files", "jpg"));
                 int result = saveFileChooser.showSaveDialog(frame);
@@ -148,8 +142,6 @@ public class Frame {
                         JOptionPane.showMessageDialog(frame, "Такого файла не существует!");
                     }
                 }
-
-            }
         });
 
         JMenu editMenu = new JMenu("Правка");
@@ -208,12 +200,7 @@ public class Frame {
 
         JMenuItem exitItem = new JMenuItem("Выход");
         menu.add(exitItem);
-
-        exitItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-            }
-        });
+        exitItem.addActionListener(e -> System.exit(0));
 
         content.add(canvas, BorderLayout.CENTER);
         JPanel colorPanel = new JPanel();
@@ -296,8 +283,6 @@ public class Frame {
         toolsPanel.add(btText);
         toolsPanel.add(btErase);
         toolsPanel.add(btCLear);
-
-
 
         content.add(colorPanel, BorderLayout.NORTH);
         content.add(toolsPanel, BorderLayout.WEST);
