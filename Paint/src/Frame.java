@@ -24,6 +24,7 @@ public class Frame {
         menuBar.setBounds(0, 0, 350, 30);
 
         JMenu menu = new JMenu("Меню");
+        menu.setBackground(Color.white);
         menuBar.add(menu);
 
         JMenu fileMenu = new JMenu("Файл");
@@ -74,12 +75,17 @@ public class Frame {
 
         JMenu copyMenu = new JMenu("Буфер обмена");
         editMenu.add(copyMenu);
-        JMenuItem selectItem = new JMenuItem("Выделить");
-        copyMenu.add(selectItem);
+        JMenuItem cutItem = new JMenuItem("Вырезать");
+        copyMenu.add(cutItem);
+        cutItem.addActionListener(e -> canvas.cutImage());
+
         JMenuItem copyItem = new JMenuItem("Копировать");
         copyMenu.add(copyItem);
+        copyItem.addActionListener(e -> canvas.copyImage());
+
         JMenuItem pasteItem = new JMenuItem("Вставить");
         copyMenu.add(pasteItem);
+        pasteItem.addActionListener(e -> canvas.pasteImage());
 
         JMenu toolsMenu = new JMenu("Инструменты");
         editMenu.add(toolsMenu);
@@ -139,6 +145,7 @@ public class Frame {
 //        JToolBar tools = new JToolBar("Инструменты", JToolBar.VERTICAL);
 
         JButton btCLear = new JButton(new ImageIcon("clear.png"));
+        btCLear.setBackground(Color.white);
         btCLear.addActionListener(e -> canvas.clear());
 
         JButton btRed = new JButton();
@@ -174,7 +181,7 @@ public class Frame {
         btBlack.addActionListener(e -> canvas.black());
 
         btChColor = new JButton(new ImageIcon("color.png"));
-        btChColor.setBackground(c);
+        btChColor.setBackground(Color.white);
         btChColor.addActionListener(e -> {
             c = JColorChooser.showDialog(((Component) e.getSource()).getParent(), "Выберите цвет!", c);
             btChColor.setBackground(c);
@@ -182,20 +189,27 @@ public class Frame {
         });
 
         JButton btHint = new JButton(new ImageIcon("pencil.png"));
+        btHint.setBackground(Color.white);
         btHint.addActionListener(e -> canvas.draw(false));
 
         JButton btErase = new JButton(new ImageIcon("eraser.png"));
+        btErase.setBackground(Color.white);
         btErase.addActionListener(e -> canvas.erase());
 
         JButton btLine= new JButton(new ImageIcon("line.png"));
+        btLine.setBackground(Color.white);
         btLine.addActionListener(e -> canvas.drLine());
 
         JButton btRectangle= new JButton(new ImageIcon("rectangle.png"));
+        btRectangle.setBackground(Color.white);
         btRectangle.addActionListener(e -> canvas.drRectangle());
+
         JButton btOval = new JButton(new ImageIcon("oval.png"));
+        btOval.setBackground(Color.white);
         btOval.addActionListener(e -> canvas.drOval());
 
         JButton btText = new JButton(new ImageIcon("textBold.png"));
+        btText.setBackground(Color.white);
         btText.addActionListener(e -> canvas.drText());
 
         colorPanel.add(btChColor);

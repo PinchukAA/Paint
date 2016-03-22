@@ -1,4 +1,5 @@
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -6,9 +7,11 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 public class Canvas extends JPanel {
-    public BufferedImage image;
+    public BufferedImage image, croppedImage;
     private Shape curShape;
     public Graphics2D g2;
     Canvas(){
@@ -18,6 +21,7 @@ public class Canvas extends JPanel {
 
     private int curX, curY, exX, exY;
     Color color;
+    Stroke stroke;
 
     public void draw(boolean b) {
         if (g2 != null) {
@@ -199,9 +203,115 @@ public class Canvas extends JPanel {
 
                 g2.setFont(new Font("Arial", 0, 30));
                 g2.drawString(text, exX, exY);
-                exX += (chWidth+5);
+                exX += (chWidth + 5);
 
                 repaint();
+            }
+        });
+    }
+
+    public void cutImage(){
+        setDoubleBuffered(false);
+        removeListeners();
+        color = g2.getColor();
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                exX = e.getX();
+                exY = e.getY();
+                requestFocus();
+            }
+        });
+
+        addMouseMotionListener(new MouseAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                curX = e.getX();
+                curY = e.getY();
+
+                curShape = new Rectangle2D.Double(Math.min(exX, curX), Math.min(exY, curY), Math.abs(curX - exX), Math.abs(curY - exY));
+                repaint();
+            }
+        });
+
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                curX = e.getX();
+                curY = e.getY();
+
+                croppedImage = image.getSubimage(Math.min(exX, curX), Math.min(exY, curY), Math.abs(curX - exX), Math.abs(curY - exY));
+                try {
+                    ImageIO.write(croppedImage, "jpeg", new File( "D:\\work\\croppedImage.jpg"));
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+                g2.setPaint(Color.white);
+                g2.fillRect(Math.min(exX, curX), Math.min(exY, curY), Math.abs(curX - exX), Math.abs(curY - exY));
+                curShape = null;
+
+                repaint();
+                g2.setColor(color);
+            }
+        });
+    }
+
+    public void copyImage(){
+        setDoubleBuffered(false);
+        removeListeners();
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                exX = e.getX();
+                exY = e.getY();
+                requestFocus();
+            }
+        });
+
+        addMouseMotionListener(new MouseAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                curX = e.getX();
+                curY = e.getY();
+
+                curShape = new Rectangle2D.Double(Math.min(exX, curX), Math.min(exY, curY), Math.abs(curX - exX), Math.abs(curY - exY));
+                repaint();
+            }
+        });
+
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                curX = e.getX();
+                curY = e.getY();
+
+                croppedImage = image.getSubimage(Math.min(exX, curX), Math.min(exY, curY), Math.abs(curX - exX), Math.abs(curY - exY));
+                curShape = null;
+                repaint();
+            }
+        });
+    }
+
+    public void pasteImage(){
+        setDoubleBuffered(false);
+        removeListeners();
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                requestFocus();
+            }
+        });
+
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+                curX = e.getX();
+                curY = e.getY();
+                if(croppedImage != null){
+                    System.out.println(curX + " " + curY);
+                    g2.drawImage(croppedImage, curX, curY,  null);
+                }
             }
         });
     }
@@ -235,7 +345,6 @@ public class Canvas extends JPanel {
             g.setColor(Color.blue);
             ((Graphics2D)(g)).draw(curShape);
         }
-
     }
 
     public void setImage(BufferedImage image){
