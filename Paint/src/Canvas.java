@@ -11,7 +11,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class Canvas extends JPanel {
-    public BufferedImage image, croppedImage;
+    public BufferedImage image, croppedImage, tempImage;
     private Shape curShape;
     public Graphics2D g2;
     Canvas(){
@@ -240,13 +240,16 @@ public class Canvas extends JPanel {
                 curX = e.getX();
                 curY = e.getY();
 
-                croppedImage = image.getSubimage(Math.min(exX, curX), Math.min(exY, curY), Math.abs(curX - exX), Math.abs(curY - exY));
+                tempImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
+                tempImage.setData(image.getRaster());
+                croppedImage = tempImage.getSubimage(Math.min(exX, curX), Math.min(exY, curY), Math.abs(curX - exX), Math.abs(curY - exY));
+
                 try {
                     ImageIO.write(croppedImage, "jpeg", new File( "D:\\work\\croppedImage.jpg"));
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
-                g2.setPaint(Color.white);
+                g2.setColor(Color.white);
                 g2.fillRect(Math.min(exX, curX), Math.min(exY, curY), Math.abs(curX - exX), Math.abs(curY - exY));
                 curShape = null;
 
@@ -285,7 +288,15 @@ public class Canvas extends JPanel {
                 curX = e.getX();
                 curY = e.getY();
 
-                croppedImage = image.getSubimage(Math.min(exX, curX), Math.min(exY, curY), Math.abs(curX - exX), Math.abs(curY - exY));
+                tempImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
+                tempImage.setData(image.getRaster());
+                croppedImage = tempImage.getSubimage(Math.min(exX, curX), Math.min(exY, curY), Math.abs(curX - exX), Math.abs(curY - exY));
+
+                try {
+                    ImageIO.write(croppedImage, "jpeg", new File( "D:\\work\\copyImage.jpg"));
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
                 curShape = null;
                 repaint();
             }
@@ -308,9 +319,15 @@ public class Canvas extends JPanel {
 
                 curX = e.getX();
                 curY = e.getY();
-                if(croppedImage != null){
+                if(croppedImage != null) {
                     System.out.println(curX + " " + curY);
-                    g2.drawImage(croppedImage, curX, curY,  null);
+                    try {
+                        ImageIO.write(croppedImage, "jpeg", new File( "D:\\work\\pasteImage.jpg"));
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+                    g2.drawImage(croppedImage, curX, curY, null);
+                    repaint();
                 }
             }
         });
