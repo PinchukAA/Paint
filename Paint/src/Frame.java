@@ -102,7 +102,6 @@ public class Frame {
         JMenu hintSizeMenu = new JMenu("Кисть/ластик");
         sizeMenu.add(hintSizeMenu);
 
-
         JMenuItem x1Item = new JMenuItem("x1");
         hintSizeMenu.add(x1Item);
         x1Item.addActionListener(e -> canvas.x1());
@@ -120,10 +119,15 @@ public class Frame {
         sizeMenu.add(textSizeMenu);
         JMenu viewMenu = new JMenu("Вид");
         editMenu.add(viewMenu);
-        JMenu increaseMenu = new JMenu("Увеличить изображение");
-        viewMenu.add(increaseMenu);
-        JMenu decreaseMenu = new JMenu("Уменьшить изображение");
-        viewMenu.add(decreaseMenu);
+        JMenuItem increaseItem = new JMenuItem("Увеличить изображение");
+        viewMenu.add(increaseItem);
+        increaseItem.addActionListener(e -> canvas.zoomInImage());
+
+
+        JMenuItem decreaseItem = new JMenuItem("Уменьшить изображение");
+        viewMenu.add(decreaseItem);
+        decreaseItem.addActionListener(e -> canvas.zoomOutImage());
+
 
         editMenu.addSeparator();
 
@@ -236,5 +240,14 @@ public class Frame {
         frame.setSize(screenSize.width, screenSize.height);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
+
+     /*   JScrollBar hBar = new JScrollBar(JScrollBar.HORIZONTAL, 30, 20, 0, canvas.getWidth());
+        JScrollBar vBar = new JScrollBar(JScrollBar.VERTICAL, 30, 40, 0, canvas.getHeight());
+        hBar.setUnitIncrement(2);
+        hBar.setBlockIncrement(1);
+    //    hBar.addAdjustmentListener(e -> canvas.repaint());
+        canvas.add(hBar, BorderLayout.SOUTH);
+        canvas.add(vBar, BorderLayout.EAST);
+*/
     }
 }

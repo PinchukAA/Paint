@@ -11,7 +11,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class Canvas extends JPanel {
-    public BufferedImage image, croppedImage, tempImage;
+    public BufferedImage image, croppedImage, tempImage, zoomImage, tempZoomImage;
     private Shape curShape;
     public Graphics2D g2;
     Canvas(){
@@ -30,6 +30,8 @@ public class Canvas extends JPanel {
                 g2.setPaint(Color.white);
             }
         }
+        curShape = null;
+        repaint();
         setDoubleBuffered(false);
         removeListeners();
         addMouseListener(new MouseAdapter() {
@@ -188,24 +190,40 @@ public class Canvas extends JPanel {
                 exX = e.getX();
                 exY = e.getY();
                 requestFocus();
+
+                curShape = null;
+                repaint();
+            }
+        });
+
+        addMouseMotionListener(new MouseAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                curX = e.getX();
+                curY = e.getY();
+
+                curShape = new Rectangle2D.Double(exX, exY, curX - exX, 35);
+                repaint();
             }
         });
 
         addKeyListener(new KeyAdapter() {
             @Override
             public void keyTyped(KeyEvent e) {
-                requestFocus();
-                String text = new String();
+                if (exX < curX - 30) {
+                    requestFocus();
+                    String text = new String();
 
-                char ch = e.getKeyChar();
-                int chWidth = g2.getFontMetrics().charWidth(ch);
-                text += ch;
+                    char ch = e.getKeyChar();
+                    int chWidth = g2.getFontMetrics().charWidth(ch);
+                    text += ch;
 
-                g2.setFont(new Font("Arial", 0, 30));
-                g2.drawString(text, exX, exY);
-                exX += (chWidth + 5);
+                    g2.setFont(new Font("Arial", 0, 30));
+                    g2.drawString(text, exX + 10, exY + 30);
+                    exX += (chWidth + 5);
 
-                repaint();
+                    repaint();
+                }
             }
         });
     }
@@ -245,7 +263,7 @@ public class Canvas extends JPanel {
                 croppedImage = tempImage.getSubimage(Math.min(exX, curX), Math.min(exY, curY), Math.abs(curX - exX), Math.abs(curY - exY));
 
                 try {
-                    ImageIO.write(croppedImage, "jpeg", new File( "D:\\work\\croppedImage.jpg"));
+                    ImageIO.write(croppedImage, "jpeg", new File("D:\\work\\croppedImage.jpg"));
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
@@ -333,6 +351,62 @@ public class Canvas extends JPanel {
         });
     }
 
+    public void zoomInImage(){
+        setDoubleBuffered(false);
+        removeListeners();
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                exX = e.getX();
+                exY = e.getY();
+                requestFocus();
+            }
+        });
+
+        addMouseMotionListener(new MouseAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                curX = e.getX();
+                curY = e.getY();
+
+                curShape = new Rectangle2D.Double(Math.min(exX, curX), Math.min(exY, curY), Math.abs(curX - exX), Math.abs(curY - exY));
+                repaint();
+            }
+        });
+
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                curX = e.getX();
+                curY = e.getY();
+
+                tempZoomImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
+                tempZoomImage.setData(image.getRaster());
+                zoomImage = tempZoomImage.getSubimage(Math.min(exX, curX), Math.min(exY, curY), Math.abs(curX - exX), Math.abs(curY - exY));
+
+
+                Image newImage = zoomImage.getScaledInstance(image.getWidth(), image.getHeight(), Image.SCALE_AREA_AVERAGING);
+
+                try {
+                    ImageIO.write(zoomImage, "jpeg", new File("D:\\work\\zoomImage.jpg"));
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+
+                curShape = null;
+                g2.drawImage(newImage, 0, 0, null);
+
+                repaint();
+            }
+        });
+    }
+
+    public void zoomOutImage(){
+        removeListeners();
+        g2.drawImage(tempZoomImage, 0, 0, null);
+        repaint();
+    }
+
 
     public void removeListeners(){
         MouseListener[] l1= getMouseListeners();
@@ -382,6 +456,7 @@ public class Canvas extends JPanel {
         g2.setPaint(Color.white);
         g2.fillRect(0, 0, getWidth(), getHeight());
         g2.setPaint(Color.black);
+        curShape = null;
         repaint();
     }
 
