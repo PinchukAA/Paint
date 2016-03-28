@@ -1,5 +1,4 @@
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -7,25 +6,24 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
-public class Canvas extends JPanel {
-    public BufferedImage image, croppedImage, tempImage, zoomImage, tempZoomImage;
+public class Canvas extends JPanel implements Scrollable{
+    public BufferedImage image, croppedImage, tempImage;
     private Shape curShape;
     public Graphics2D g2;
+
     Canvas(){
+        setPreferredSize(new Dimension(1920, 1080));
         draw(false);
         repaint();
     }
 
     private int curX, curY, exX, exY;
     Color color;
-    Stroke stroke;
 
     public void draw(boolean b) {
-        if (g2 != null) {
-            g2.setColor(color);
+            if (g2 != null) {
+                g2.setColor(color);
             if (b) {
                 g2.setPaint(Color.white);
             }
@@ -158,7 +156,6 @@ public class Canvas extends JPanel {
                 curX = e.getX();
                 curY = e.getY();
 
-
                 if (g2 != null) {
                     g2.drawOval(Math.min(exX, curX), Math.min(exY, curY), Math.abs(curX - exX), Math.abs(curY - exY));
                     curShape = null;
@@ -262,11 +259,6 @@ public class Canvas extends JPanel {
                 tempImage.setData(image.getRaster());
                 croppedImage = tempImage.getSubimage(Math.min(exX, curX), Math.min(exY, curY), Math.abs(curX - exX), Math.abs(curY - exY));
 
-                try {
-                    ImageIO.write(croppedImage, "jpeg", new File("D:\\work\\croppedImage.jpg"));
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
                 g2.setColor(Color.white);
                 g2.fillRect(Math.min(exX, curX), Math.min(exY, curY), Math.abs(curX - exX), Math.abs(curY - exY));
                 curShape = null;
@@ -310,11 +302,6 @@ public class Canvas extends JPanel {
                 tempImage.setData(image.getRaster());
                 croppedImage = tempImage.getSubimage(Math.min(exX, curX), Math.min(exY, curY), Math.abs(curX - exX), Math.abs(curY - exY));
 
-                try {
-                    ImageIO.write(croppedImage, "jpeg", new File( "D:\\work\\copyImage.jpg"));
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
                 curShape = null;
                 repaint();
             }
@@ -339,11 +326,6 @@ public class Canvas extends JPanel {
                 curY = e.getY();
                 if(croppedImage != null) {
                     System.out.println(curX + " " + curY);
-                    try {
-                        ImageIO.write(croppedImage, "jpeg", new File( "D:\\work\\pasteImage.jpg"));
-                    } catch (IOException e1) {
-                        e1.printStackTrace();
-                    }
                     g2.drawImage(croppedImage, curX, curY, null);
                     repaint();
                 }
@@ -351,59 +333,31 @@ public class Canvas extends JPanel {
         });
     }
 
-    public void zoomInImage(){
+    public void zoomInImage() {
+        Frame.zoomInOff();
         setDoubleBuffered(false);
-        removeListeners();
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                exX = e.getX();
-                exY = e.getY();
-                requestFocus();
-            }
-        });
 
-        addMouseMotionListener(new MouseAdapter() {
-            @Override
-            public void mouseDragged(MouseEvent e) {
-                curX = e.getX();
-                curY = e.getY();
+        setPreferredSize(new Dimension(image.getWidth() *2, image.getHeight() * 2));
+        Image scaledImage = image.getScaledInstance(image.getWidth()*2, image.getHeight()*2, Image.SCALE_AREA_AVERAGING);
 
-                curShape = new Rectangle2D.Double(Math.min(exX, curX), Math.min(exY, curY), Math.abs(curX - exX), Math.abs(curY - exY));
-                repaint();
-            }
-        });
+        image = new BufferedImage(getWidth() * 2 , getHeight() * 2, BufferedImage.TYPE_INT_RGB);
+        g2 = image.createGraphics();
 
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                curX = e.getX();
-                curY = e.getY();
-
-                tempZoomImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
-                tempZoomImage.setData(image.getRaster());
-                zoomImage = tempZoomImage.getSubimage(Math.min(exX, curX), Math.min(exY, curY), Math.abs(curX - exX), Math.abs(curY - exY));
-
-
-                Image newImage = zoomImage.getScaledInstance(image.getWidth(), image.getHeight(), Image.SCALE_AREA_AVERAGING);
-
-                try {
-                    ImageIO.write(zoomImage, "jpeg", new File("D:\\work\\zoomImage.jpg"));
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-
-                curShape = null;
-                g2.drawImage(newImage, 0, 0, null);
-
-                repaint();
-            }
-        });
+        g2.drawImage(scaledImage, 0, 0, null);
+        repaint();
     }
 
-    public void zoomOutImage(){
-        removeListeners();
-        g2.drawImage(tempZoomImage, 0, 0, null);
+    public void zoomOutImage() {
+        Frame.zoomOutOff();
+        setDoubleBuffered(false);
+
+        setPreferredSize(new Dimension(image.getWidth() / 2, image.getHeight() / 2));
+        Image scaledImage = image.getScaledInstance(image.getWidth() / 2, image.getHeight() / 2, Image.SCALE_AREA_AVERAGING);
+
+        image = new BufferedImage(getWidth() / 2 , getHeight() / 2, BufferedImage.TYPE_INT_RGB);
+        g2 = image.createGraphics();
+
+        g2.drawImage(scaledImage, 0, 0, null);
         repaint();
     }
 
@@ -450,7 +404,6 @@ public class Canvas extends JPanel {
     public BufferedImage getImage(){
         return image;
     }
-
 
     public void clear() {
         g2.setPaint(Color.white);
@@ -515,5 +468,30 @@ public class Canvas extends JPanel {
 
     public void x8(){
         g2.setStroke(new BasicStroke(8));
+    }
+
+    @Override
+    public Dimension getPreferredScrollableViewportSize() {
+        return getSize();
+    }
+
+    @Override
+    public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
+        return 5;
+    }
+
+    @Override
+    public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
+        return 5;
+    }
+
+    @Override
+    public boolean getScrollableTracksViewportWidth() {
+        return false;
+    }
+
+    @Override
+    public boolean getScrollableTracksViewportHeight() {
+        return false;
     }
 }

@@ -2,8 +2,6 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
@@ -13,9 +11,11 @@ public class Frame {
     String fileName;
     BufferedImage image;
     JButton btChColor;
+    static JMenuItem increaseItem, decreaseItem;
+    JFrame frame;
 
     public void show() {
-        JFrame frame = new JFrame("Рисовалка");
+        frame = new JFrame("Рисовалка");
         Container content = frame.getContentPane();
         content.setLayout(new BorderLayout());
 
@@ -41,7 +41,7 @@ public class Frame {
                     fileName = openFileChooser.getSelectedFile().getAbsolutePath();
                     File file = new File(fileName);
                     image = ImageIO.read(file);
-                    frame.setSize(image.getWidth() + 40, image.getHeight() + 80);
+                    frame.setSize(image.getWidth(), image.getHeight());
                     canvas.setImage(image);
 
                 } catch (Exception ex) {
@@ -90,17 +90,16 @@ public class Frame {
         JMenu toolsMenu = new JMenu("Инструменты");
         editMenu.add(toolsMenu);
 
-        JMenu sizeMenu = new JMenu("Размер");
-        toolsMenu.add(sizeMenu);
-        JMenuItem colorItem = new JMenuItem("Цвет");
+        JMenu hintSizeMenu = new JMenu("Размер кисти/ластика");
+        toolsMenu.add(hintSizeMenu);
+
+        JMenuItem colorItem = new JMenuItem("Цвет кисти");
         toolsMenu.add(colorItem);
         colorItem.addActionListener(e -> {
             c = JColorChooser.showDialog(((Component) e.getSource()).getParent(), "Выберите цвет!", c);
             btChColor.setBackground(c);
             canvas.chooseColor(c);
         });
-        JMenu hintSizeMenu = new JMenu("Кисть/ластик");
-        sizeMenu.add(hintSizeMenu);
 
         JMenuItem x1Item = new JMenuItem("x1");
         hintSizeMenu.add(x1Item);
@@ -115,18 +114,16 @@ public class Frame {
         hintSizeMenu.add(x8Item);
         x8Item.addActionListener(e -> canvas.x8());
 
-        JMenu textSizeMenu = new JMenu("Текст");
-        sizeMenu.add(textSizeMenu);
         JMenu viewMenu = new JMenu("Вид");
         editMenu.add(viewMenu);
-        JMenuItem increaseItem = new JMenuItem("Увеличить изображение");
+        increaseItem = new JMenuItem("Увеличить изображение");
         viewMenu.add(increaseItem);
         increaseItem.addActionListener(e -> canvas.zoomInImage());
 
-
-        JMenuItem decreaseItem = new JMenuItem("Уменьшить изображение");
+        decreaseItem = new JMenuItem("Уменьшить изображение");
         viewMenu.add(decreaseItem);
         decreaseItem.addActionListener(e -> canvas.zoomOutImage());
+        decreaseItem.setVisible(false);
 
 
         editMenu.addSeparator();
@@ -146,7 +143,6 @@ public class Frame {
         colorPanel.setLayout(new GridLayout(1, 8));
         JPanel toolsPanel = new JPanel();
         toolsPanel.setLayout(new GridLayout(7, 1));
-//        JToolBar tools = new JToolBar("Инструменты", JToolBar.VERTICAL);
 
         JButton btCLear = new JButton(new ImageIcon("clear.png"));
         btCLear.setBackground(Color.white);
@@ -237,17 +233,22 @@ public class Frame {
         content.add(colorPanel, BorderLayout.NORTH);
         content.add(toolsPanel, BorderLayout.WEST);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+
+        JScrollPane canvasScrollPane = new JScrollPane(canvas);
+        canvasScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        canvasScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        frame.add(canvasScrollPane);
         frame.setSize(screenSize.width, screenSize.height);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
+    }
 
-     /*   JScrollBar hBar = new JScrollBar(JScrollBar.HORIZONTAL, 30, 20, 0, canvas.getWidth());
-        JScrollBar vBar = new JScrollBar(JScrollBar.VERTICAL, 30, 40, 0, canvas.getHeight());
-        hBar.setUnitIncrement(2);
-        hBar.setBlockIncrement(1);
-    //    hBar.addAdjustmentListener(e -> canvas.repaint());
-        canvas.add(hBar, BorderLayout.SOUTH);
-        canvas.add(vBar, BorderLayout.EAST);
-*/
+    public static void zoomInOff(){
+        increaseItem.setVisible(false);
+        decreaseItem.setVisible(true);
+    }
+    public static void zoomOutOff(){
+        decreaseItem.setVisible(false);
+        increaseItem.setVisible(true);
     }
 }
