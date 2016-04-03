@@ -8,42 +8,60 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 public class Canvas extends JPanel implements Scrollable{
-    public BufferedImage image, croppedImage, tempImage;
+    public BufferedImage image, croppedImage, tempImage, tempCroppedImage;
     private Shape curShape;
     public Graphics2D g2;
+    private Image cursorImage;
+    private Toolkit toolkit;
+    private Cursor cursor;
+    private Point point;
 
     Canvas(){
         setPreferredSize(new Dimension(1920, 1080));
+        point = new Point(0, 0);
+        toolkit = Toolkit.getDefaultToolkit();
+        cursorImage = toolkit.getImage("cursorPencil.png");
+        cursor = toolkit.createCustomCursor(cursorImage, point, "cursorPencil");
+        setCursor(cursor);
+
         draw(false);
         repaint();
     }
 
-    private int curX, curY, exX, exY;
+    public int curX, curY, exX, exY;
     Color color;
 
     public void draw(boolean b) {
             if (g2 != null) {
                 g2.setColor(color);
+                cursorImage = toolkit.getImage("cursorPencil.png");
+                cursor = toolkit.createCustomCursor(cursorImage, point, "cursorPencil");
+
             if (b) {
+                cursorImage = toolkit.getImage("cursorEraser.png");
+                cursor = toolkit.createCustomCursor(cursorImage, point, "cursorEraser");
                 g2.setPaint(Color.white);
             }
         }
+
+        setCursor(cursor);
         curShape = null;
         repaint();
+
         setDoubleBuffered(false);
         removeListeners();
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 exX = e.getX();
-                exY = e.getY();
+                exY = e.getY() + 30;
                 requestFocus();
             }
         });
         addMouseMotionListener(new MouseMotionAdapter() {
             public void mouseDragged(MouseEvent e) {
                 curX = e.getX();
-                curY = e.getY();
+                curY = e.getY() + 30;
 
                 if (g2 != null) {
                     g2.drawLine(exX, exY, curX, curY);
@@ -59,12 +77,17 @@ public class Canvas extends JPanel implements Scrollable{
     public void drLine(){
         setDoubleBuffered(false);
         removeListeners();
+
         g2.setPaint(color);
+        cursorImage = toolkit.getImage("cursorPencil.png");
+        cursor = toolkit.createCustomCursor(cursorImage, point, "cursorPencil");
+        setCursor(cursor);
+
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 exX = e.getX();
-                exY = e.getY();
+                exY = e.getY() + 30;
                 requestFocus();
             }
         });
@@ -73,7 +96,7 @@ public class Canvas extends JPanel implements Scrollable{
             @Override
             public void mouseReleased(MouseEvent e) {
                 curX = e.getX();
-                curY = e.getY();
+                curY = e.getY() + 30;
                 if (g2 != null) {
 
                     g2.drawLine(exX, exY, curX, curY);
@@ -88,7 +111,7 @@ public class Canvas extends JPanel implements Scrollable{
             @Override
             public void mouseDragged(MouseEvent e) {
                 curX = e.getX();
-                curY = e.getY();
+                curY = e.getY() + 30;
 
                 curShape = new Line2D.Double(exX, exY, curX, curY);
                 repaint();
@@ -100,12 +123,17 @@ public class Canvas extends JPanel implements Scrollable{
     public void drRectangle(){
         setDoubleBuffered(false);
         removeListeners();
+
         g2.setPaint(color);
+        cursorImage = toolkit.getImage("cursorPencil.png");
+        cursor = toolkit.createCustomCursor(cursorImage, point, "cursorPencil");
+        setCursor(cursor);
+
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 exX = e.getX();
-                exY = e.getY();
+                exY = e.getY() + 30;
                 requestFocus();
             }
         });
@@ -115,7 +143,7 @@ public class Canvas extends JPanel implements Scrollable{
             @Override
             public void mouseReleased(MouseEvent e) {
                 curX = e.getX();
-                curY = e.getY();
+                curY = e.getY() + 30;
 
                 if (g2 != null) {
                     g2.drawRect(Math.min(exX, curX), Math.min(exY, curY), Math.abs(curX - exX), Math.abs(curY - exY));
@@ -130,7 +158,7 @@ public class Canvas extends JPanel implements Scrollable{
             @Override
             public void mouseDragged(MouseEvent e) {
                 curX = e.getX();
-                curY = e.getY();
+                curY = e.getY() + 30;
 
                 curShape = new Rectangle2D.Double(Math.min(exX, curX), Math.min(exY, curY), Math.abs(curX - exX), Math.abs(curY - exY));
                 repaint();
@@ -141,20 +169,26 @@ public class Canvas extends JPanel implements Scrollable{
     public void drOval(){
         setDoubleBuffered(false);
         removeListeners();
+
         g2.setPaint(color);
+        cursorImage = toolkit.getImage("cursorPencil.png");
+        cursor = toolkit.createCustomCursor(cursorImage, point, "cursorPencil");
+        setCursor(cursor);
+
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 exX = e.getX();
-                exY = e.getY();
+                exY = e.getY() + 30;
                 requestFocus();
             }
         });
+
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
                 curX = e.getX();
-                curY = e.getY();
+                curY = e.getY() + 30;
 
                 if (g2 != null) {
                     g2.drawOval(Math.min(exX, curX), Math.min(exY, curY), Math.abs(curX - exX), Math.abs(curY - exY));
@@ -169,7 +203,7 @@ public class Canvas extends JPanel implements Scrollable{
             @Override
             public void mouseDragged(MouseEvent e) {
                 curX = e.getX();
-                curY = e.getY();
+                curY = e.getY() + 30;
 
                 curShape = new Ellipse2D.Double(Math.min(exX, curX), Math.min(exY, curY), Math.abs(curX - exX), Math.abs(curY - exY));
                 repaint();
@@ -180,7 +214,12 @@ public class Canvas extends JPanel implements Scrollable{
     public void drText(){
         setDoubleBuffered(false);
         removeListeners();
+
         g2.setPaint(color);
+        cursorImage = toolkit.getImage("cursorBold.png");
+        cursor = toolkit.createCustomCursor(cursorImage, point, "cursorBold");
+        setCursor(cursor);
+
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -225,15 +264,19 @@ public class Canvas extends JPanel implements Scrollable{
         });
     }
 
-    public void cutImage(){
+    public void selectImage(){
         setDoubleBuffered(false);
         removeListeners();
-        color = g2.getColor();
+
+        cursorImage = toolkit.getImage("cursorSelect.png");
+        cursor = toolkit.createCustomCursor(cursorImage, point, "cursorSelect");
+        setCursor(cursor);
+
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 exX = e.getX();
-                exY = e.getY();
+                exY = e.getY() + 30;
                 requestFocus();
             }
         });
@@ -242,7 +285,7 @@ public class Canvas extends JPanel implements Scrollable{
             @Override
             public void mouseDragged(MouseEvent e) {
                 curX = e.getX();
-                curY = e.getY();
+                curY = e.getY() + 30;
 
                 curShape = new Rectangle2D.Double(Math.min(exX, curX), Math.min(exY, curY), Math.abs(curX - exX), Math.abs(curY - exY));
                 repaint();
@@ -253,64 +296,50 @@ public class Canvas extends JPanel implements Scrollable{
             @Override
             public void mouseReleased(MouseEvent e) {
                 curX = e.getX();
-                curY = e.getY();
+                curY = e.getY() + 30;
 
                 tempImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
                 tempImage.setData(image.getRaster());
-                croppedImage = tempImage.getSubimage(Math.min(exX, curX), Math.min(exY, curY), Math.abs(curX - exX), Math.abs(curY - exY));
-
-                g2.setColor(Color.white);
-                g2.fillRect(Math.min(exX, curX), Math.min(exY, curY), Math.abs(curX - exX), Math.abs(curY - exY));
-                curShape = null;
-
-                repaint();
-                g2.setColor(color);
+                tempCroppedImage = tempImage.getSubimage(Math.min(exX, curX), Math.min(exY, curY), Math.abs(curX - exX), Math.abs(curY - exY));
             }
         });
     }
 
+    public void cutImage(){
+        setDoubleBuffered(false);
+        removeListeners();
+        color = g2.getColor();
+
+        croppedImage = tempCroppedImage;
+        g2.setColor(Color.white);
+        g2.fillRect(Math.min(exX, curX), Math.min(exY, curY), Math.abs(curX - exX), Math.abs(curY - exY));
+        curShape = null;
+
+        repaint();
+        g2.setColor(color);
+    }
+
+
+
     public void copyImage(){
         setDoubleBuffered(false);
         removeListeners();
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                exX = e.getX();
-                exY = e.getY();
-                requestFocus();
-            }
-        });
 
-        addMouseMotionListener(new MouseAdapter() {
-            @Override
-            public void mouseDragged(MouseEvent e) {
-                curX = e.getX();
-                curY = e.getY();
+        croppedImage = tempCroppedImage;
+        curShape = null;
 
-                curShape = new Rectangle2D.Double(Math.min(exX, curX), Math.min(exY, curY), Math.abs(curX - exX), Math.abs(curY - exY));
-                repaint();
-            }
-        });
-
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                curX = e.getX();
-                curY = e.getY();
-
-                tempImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
-                tempImage.setData(image.getRaster());
-                croppedImage = tempImage.getSubimage(Math.min(exX, curX), Math.min(exY, curY), Math.abs(curX - exX), Math.abs(curY - exY));
-
-                curShape = null;
-                repaint();
-            }
-        });
+        repaint();
     }
 
     public void pasteImage(){
         setDoubleBuffered(false);
         removeListeners();
+
+        cursorImage = toolkit.getImage("cursorPaste.png");
+        cursor = toolkit.createCustomCursor(cursorImage, point, "cursorPaste");
+        setCursor(cursor);
+
+
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -325,7 +354,6 @@ public class Canvas extends JPanel implements Scrollable{
                 curX = e.getX();
                 curY = e.getY();
                 if(croppedImage != null) {
-                    System.out.println(curX + " " + curY);
                     g2.drawImage(croppedImage, curX, curY, null);
                     repaint();
                 }
@@ -334,30 +362,36 @@ public class Canvas extends JPanel implements Scrollable{
     }
 
     public void zoomInImage() {
-        Frame.zoomInOff();
         setDoubleBuffered(false);
+        color = g2.getColor();
 
         setPreferredSize(new Dimension(image.getWidth() *2, image.getHeight() * 2));
         Image scaledImage = image.getScaledInstance(image.getWidth()*2, image.getHeight()*2, Image.SCALE_AREA_AVERAGING);
 
         image = new BufferedImage(getWidth() * 2 , getHeight() * 2, BufferedImage.TYPE_INT_RGB);
         g2 = image.createGraphics();
-
         g2.drawImage(scaledImage, 0, 0, null);
+
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setPaint(color);
+
         repaint();
     }
 
     public void zoomOutImage() {
-        Frame.zoomOutOff();
         setDoubleBuffered(false);
+        color = g2.getColor();
 
         setPreferredSize(new Dimension(image.getWidth() / 2, image.getHeight() / 2));
         Image scaledImage = image.getScaledInstance(image.getWidth() / 2, image.getHeight() / 2, Image.SCALE_AREA_AVERAGING);
 
         image = new BufferedImage(getWidth() / 2 , getHeight() / 2, BufferedImage.TYPE_INT_RGB);
         g2 = image.createGraphics();
-
         g2.drawImage(scaledImage, 0, 0, null);
+
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setPaint(color);
+
         repaint();
     }
 

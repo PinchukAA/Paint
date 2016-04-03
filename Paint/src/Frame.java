@@ -1,7 +1,10 @@
+import javafx.scene.paint.*;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
@@ -11,8 +14,9 @@ public class Frame {
     String fileName;
     BufferedImage image;
     JButton btChColor;
-    static JMenuItem increaseItem, decreaseItem;
-    JFrame frame;
+    JMenuItem increaseItem, decreaseItem;
+    static JFrame frame;
+    int count = 0;
 
     public void show() {
         frame = new JFrame("Рисовалка");
@@ -75,6 +79,11 @@ public class Frame {
 
         JMenu copyMenu = new JMenu("Буфер обмена");
         editMenu.add(copyMenu);
+
+        JMenuItem selectItem = new JMenuItem("Выделить");
+        copyMenu.add(selectItem);
+        selectItem.addActionListener(e -> canvas.selectImage());
+
         JMenuItem cutItem = new JMenuItem("Вырезать");
         copyMenu.add(cutItem);
         cutItem.addActionListener(e -> canvas.cutImage());
@@ -118,11 +127,19 @@ public class Frame {
         editMenu.add(viewMenu);
         increaseItem = new JMenuItem("Увеличить изображение");
         viewMenu.add(increaseItem);
-        increaseItem.addActionListener(e -> canvas.zoomInImage());
+        increaseItem.addActionListener(e -> {
+            canvas.zoomInImage();
+            increaseItem.setVisible(false);
+            decreaseItem.setVisible(true);
+        });
 
         decreaseItem = new JMenuItem("Уменьшить изображение");
         viewMenu.add(decreaseItem);
-        decreaseItem.addActionListener(e -> canvas.zoomOutImage());
+        decreaseItem.addActionListener(e -> {
+            canvas.zoomOutImage();
+            decreaseItem.setVisible(false);
+            increaseItem.setVisible(true);
+        });
         decreaseItem.setVisible(false);
 
 
@@ -141,8 +158,9 @@ public class Frame {
         content.add(canvas, BorderLayout.CENTER);
         JPanel colorPanel = new JPanel();
         colorPanel.setLayout(new GridLayout(1, 8));
+
         JPanel toolsPanel = new JPanel();
-        toolsPanel.setLayout(new GridLayout(7, 1));
+        toolsPanel.setLayout(new GridLayout(12, 1));
 
         JButton btCLear = new JButton(new ImageIcon("clear.png"));
         btCLear.setBackground(Color.white);
@@ -208,9 +226,34 @@ public class Frame {
         btOval.setBackground(Color.white);
         btOval.addActionListener(e -> canvas.drOval());
 
-        JButton btText = new JButton(new ImageIcon("textBold.png"));
+        JButton btText = new JButton(new ImageIcon("bold.png"));
         btText.setBackground(Color.white);
         btText.addActionListener(e -> canvas.drText());
+
+        JButton btZoom = new JButton(new ImageIcon("zoom.png"));
+        btZoom.setBackground(Color.white);
+        btZoom.addActionListener(e -> {
+            if (count % 2 == 0) canvas.zoomInImage();
+            else canvas.zoomOutImage();
+            count++;
+        });
+
+        JButton btSelect = new JButton(new ImageIcon("select.png"));
+        btSelect.setBackground(Color.white);
+        btSelect.addActionListener(e -> canvas.selectImage());
+
+        JButton btCut = new JButton(new ImageIcon("cut.png"));
+        btCut.setBackground(Color.white);
+        btCut.addActionListener(e -> canvas.cutImage());
+
+        JButton btCopy = new JButton(new ImageIcon("copy.png"));
+        btCopy.setBackground(Color.white);
+        btCopy.addActionListener(e -> canvas.copyImage());
+
+        JButton btPaste = new JButton(new ImageIcon("paste.png"));
+        btPaste.setBackground(Color.white);
+        btPaste.addActionListener(e -> canvas.pasteImage());
+
 
         colorPanel.add(btChColor);
         colorPanel.add(btRed);
@@ -228,7 +271,13 @@ public class Frame {
         toolsPanel.add(btOval);
         toolsPanel.add(btText);
         toolsPanel.add(btErase);
+        toolsPanel.add(btZoom);
+        toolsPanel.add(btSelect);
+        toolsPanel.add(btCut);
+        toolsPanel.add(btCopy);
+        toolsPanel.add(btPaste);
         toolsPanel.add(btCLear);
+
 
         content.add(colorPanel, BorderLayout.NORTH);
         content.add(toolsPanel, BorderLayout.WEST);
@@ -241,14 +290,5 @@ public class Frame {
         frame.setSize(screenSize.width, screenSize.height);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
-    }
-
-    public static void zoomInOff(){
-        increaseItem.setVisible(false);
-        decreaseItem.setVisible(true);
-    }
-    public static void zoomOutOff(){
-        decreaseItem.setVisible(false);
-        increaseItem.setVisible(true);
     }
 }
