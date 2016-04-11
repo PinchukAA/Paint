@@ -1,4 +1,3 @@
-import javafx.scene.paint.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -233,8 +232,16 @@ public class Frame {
         JButton btZoom = new JButton(new ImageIcon("zoom.png"));
         btZoom.setBackground(Color.white);
         btZoom.addActionListener(e -> {
-            if (count % 2 == 0) canvas.zoomInImage();
-            else canvas.zoomOutImage();
+            if (count % 2 == 0) {
+                canvas.zoomInImage();
+                increaseItem.setVisible(false);
+                decreaseItem.setVisible(true);
+            }
+            else {
+                canvas.zoomOutImage();
+                increaseItem.setVisible(true);
+                decreaseItem.setVisible(false);
+            }
             count++;
         });
 

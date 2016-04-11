@@ -1,11 +1,14 @@
 
+import javafx.scene.shape.Polyline;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Line2D;
-import java.awt.geom.Rectangle2D;
+import java.awt.geom.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.Raster;
+import java.awt.image.WritableRaster;
+import java.util.ArrayList;
 
 public class Canvas extends JPanel implements Scrollable{
     public BufferedImage image, croppedImage, tempImage, tempCroppedImage;
@@ -19,12 +22,15 @@ public class Canvas extends JPanel implements Scrollable{
     Canvas(){
         setPreferredSize(new Dimension(1920, 1080));
         point = new Point(0, 0);
+
         toolkit = Toolkit.getDefaultToolkit();
         cursorImage = toolkit.getImage("cursorPencil.png");
         cursor = toolkit.createCustomCursor(cursorImage, point, "cursorPencil");
         setCursor(cursor);
+        color = Color.black;
 
         draw(false);
+
         repaint();
     }
 
@@ -33,7 +39,7 @@ public class Canvas extends JPanel implements Scrollable{
 
     public void draw(boolean b) {
             if (g2 != null) {
-                g2.setColor(color);
+                g2.setPaint(color);
                 cursorImage = toolkit.getImage("cursorPencil.png");
                 cursor = toolkit.createCustomCursor(cursorImage, point, "cursorPencil");
 
@@ -264,7 +270,7 @@ public class Canvas extends JPanel implements Scrollable{
         });
     }
 
-    public void selectImage(){
+    public void selectFreeImage(){
         setDoubleBuffered(false);
         removeListeners();
 
@@ -305,6 +311,72 @@ public class Canvas extends JPanel implements Scrollable{
         });
     }
 
+    GeneralPath path;
+
+    public void selectImage(){
+        setDoubleBuffered(false);
+        removeListeners();
+
+        cursorImage = toolkit.getImage("cursorSelect.png");
+        cursor = toolkit.createCustomCursor(cursorImage, point, "cursorSelect");
+        setCursor(cursor);
+        g2.setPaint(color);
+
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                exX = e.getX();
+                exY = e.getY() + 30;
+
+                path = new GeneralPath();
+                path.moveTo(exX, exY);
+
+                curShape = path;
+                requestFocus();
+            }
+        });
+
+        addMouseMotionListener(new MouseAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                curX = e.getX();
+                curY = e.getY() + 30;
+
+                path.lineTo(curX, curY);
+
+                repaint();
+            }
+        });
+
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                path.closePath();
+
+                tempImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+                tempImage.setData(image.getRaster());
+
+                Graphics2D gTemp = tempImage.createGraphics();
+
+                Area pathArea = new Area(path);
+                Area appendArea = new Area(path.getBounds());
+                Area resultArea = new Area();
+                resultArea.add(appendArea);
+                resultArea.subtract(pathArea);
+                gTemp.setComposite(AlphaComposite.Clear);
+                gTemp.fill(resultArea);
+
+                tempCroppedImage = tempImage.getSubimage((int) path.getBounds().getX(),
+                        (int) path.getBounds().getY(),
+                        (int) path.getBounds().getWidth(),
+                        (int) path.getBounds().getHeight());
+
+                repaint();
+            }
+        });
+
+    }
+
     public void cutImage(){
         setDoubleBuffered(false);
         removeListeners();
@@ -312,7 +384,10 @@ public class Canvas extends JPanel implements Scrollable{
 
         croppedImage = tempCroppedImage;
         g2.setColor(Color.white);
-        g2.fillRect(Math.min(exX, curX), Math.min(exY, curY), Math.abs(curX - exX), Math.abs(curY - exY));
+
+        if(path != null) {
+            g2.fill(path);
+        } else g2.fillRect(Math.min(exX, curX), Math.min(exY, curY), Math.abs(curX - exX), Math.abs(curY - exY));
         curShape = null;
 
         repaint();
@@ -413,7 +488,7 @@ public class Canvas extends JPanel implements Scrollable{
 
     protected void paintComponent(Graphics g){
         if (image == null) {
-            image = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
+            image = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
             g2 = (Graphics2D) image.getGraphics();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             clear();
@@ -442,7 +517,7 @@ public class Canvas extends JPanel implements Scrollable{
     public void clear() {
         g2.setPaint(Color.white);
         g2.fillRect(0, 0, getWidth(), getHeight());
-        g2.setPaint(Color.black);
+        g2.setPaint(color);
         curShape = null;
         repaint();
     }
