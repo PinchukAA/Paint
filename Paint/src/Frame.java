@@ -159,7 +159,7 @@ public class Frame {
         colorPanel.setLayout(new GridLayout(1, 8));
 
         JPanel toolsPanel = new JPanel();
-        toolsPanel.setLayout(new GridLayout(12, 1));
+        toolsPanel.setLayout(new GridLayout(13, 1));
 
         JButton btCLear = new JButton(new ImageIcon("clear.png"));
         btCLear.setBackground(Color.white);
@@ -249,6 +249,10 @@ public class Frame {
         btSelect.setBackground(Color.white);
         btSelect.addActionListener(e -> canvas.selectImage());
 
+        JButton btSelectFree = new JButton(new ImageIcon("selectFree.png"));
+        btSelectFree.setBackground(Color.white);
+        btSelectFree.addActionListener(e -> canvas.selectFreeImage());
+
         JButton btCut = new JButton(new ImageIcon("cut.png"));
         btCut.setBackground(Color.white);
         btCut.addActionListener(e -> canvas.cutImage());
@@ -280,6 +284,7 @@ public class Frame {
         toolsPanel.add(btErase);
         toolsPanel.add(btZoom);
         toolsPanel.add(btSelect);
+        toolsPanel.add(btSelectFree);
         toolsPanel.add(btCut);
         toolsPanel.add(btCopy);
         toolsPanel.add(btPaste);
