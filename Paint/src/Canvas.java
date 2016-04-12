@@ -1,4 +1,6 @@
 
+import com.sun.istack.internal.NotNull;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -347,7 +349,7 @@ public class Canvas extends JPanel implements Scrollable{
             public void mouseReleased(MouseEvent e) {
                 path.closePath();
 
-                tempImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+                tempImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
                 tempImage.setData(image.getRaster());
 
                 Graphics2D gTemp = tempImage.createGraphics();
@@ -507,12 +509,8 @@ public class Canvas extends JPanel implements Scrollable{
         }
     }
 
-    public void setImage(BufferedImage image){
-        this.image = image;
-        g2 = (Graphics2D) image.getGraphics();
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2.setPaint(Color.black);
-        getGraphics().drawImage(image, 0, 0, null);
+    public void setImage(BufferedImage setImage){
+        g2.drawImage(setImage, 0, 0, null);
         repaint();
     }
 

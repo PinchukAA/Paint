@@ -40,16 +40,18 @@ public class Frame {
             openFileChooser.setFileFilter(new FileNameExtensionFilter("Image files", "jpg"));
             int result = openFileChooser.showOpenDialog(frame);
             if (result == JFileChooser.APPROVE_OPTION) {
-                try {
-                    fileName = openFileChooser.getSelectedFile().getAbsolutePath();
-                    File file = new File(fileName);
-                    image = ImageIO.read(file);
-                    frame.setSize(image.getWidth(), image.getHeight());
-                    canvas.setImage(image);
 
+                    fileName = openFileChooser.getSelectedFile().getAbsolutePath();
+                File file = new File(fileName);
+                try {
+                image = ImageIO.read(file);
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(frame, "Такого файла не существует!");
                 }
+                    frame.setSize(image.getWidth(), image.getHeight());
+                    canvas.setImage(image);
+
+
             }
         });
 
