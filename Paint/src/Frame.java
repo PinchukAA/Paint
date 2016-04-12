@@ -11,7 +11,7 @@ public class Frame {
     Canvas canvas;
     Color c;
     String fileName;
-    BufferedImage image;
+    BufferedImage image, saveImage;
     JButton btChColor;
     JMenuItem increaseItem, decreaseItem;
     static JFrame frame;
@@ -40,17 +40,15 @@ public class Frame {
             openFileChooser.setFileFilter(new FileNameExtensionFilter("Image files", "jpg"));
             int result = openFileChooser.showOpenDialog(frame);
             if (result == JFileChooser.APPROVE_OPTION) {
-
-                    fileName = openFileChooser.getSelectedFile().getAbsolutePath();
-                File file = new File(fileName);
                 try {
-                image = ImageIO.read(file);
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(frame, "Такого файла не существует!");
-                }
+                    fileName = openFileChooser.getSelectedFile().getAbsolutePath();
+                    File file = new File(fileName);
+                    image = ImageIO.read(file);
                     frame.setSize(image.getWidth(), image.getHeight());
                     canvas.setImage(image);
-
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(frame, "Такого файла не существует!");
+            }
 
             }
         });
@@ -67,7 +65,10 @@ public class Frame {
             if (result == JFileChooser.APPROVE_OPTION) {
                 try {
                     fileName = saveFileChooser.getSelectedFile().getAbsolutePath();
-                    ImageIO.write(canvas.getImage(), "jpeg", new File(fileName + ".jpg"));
+
+                    saveImage = new BufferedImage(canvas.getImage().getWidth(), canvas.getImage().getHeight(), BufferedImage.TYPE_INT_RGB);
+                    saveImage.createGraphics().drawImage(canvas.getImage(), 0, 0, null);
+                    ImageIO.write(saveImage, "jpeg", new File(fileName + ".jpg"));
 
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(frame, "Такого файла не существует!");
